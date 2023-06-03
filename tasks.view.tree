@@ -1,0 +1,71 @@
+$bun_tasks $mol_page
+	attr *
+		^
+		mol_theme \$mol_theme_light
+	title \Спиок дел
+	body /
+		<= Bar_row $mol_row
+			sub /
+				<= Bar_left $bun_tasks_bar
+				<= Bar_right $bun_tasks_bar
+
+$bun_tasks_bar $mol_view
+	sub /
+		<= Input_row $mol_row
+			sub /
+				<= Input_title $bun_tasks_enter_input
+					hint \Заголовок
+					value? <=> input_title_value? \
+					on_enter? <=> add_task?
+				<= Input_details $bun_tasks_enter_input
+					hint \Детали
+					value? <=> input_details_value? \
+					on_enter? <=> add_task?
+		<= List $mol_list
+			rows <= tasks /$mol_view
+				<= Task* $bun_tasks_task_item
+					title? <=> task_title*? \
+					details? <=> task_details*? \
+					done <= task_done* false
+					toggle_done? <=> toggle_task_done*? null
+
+$bun_tasks_task_item $mol_view
+	edit_mode false
+	done false
+	attr *
+		^
+		done <= done
+	sub /
+		<= Content $mol_row
+			sub /
+				<= Tools $mol_list
+					sub /
+						<= Checkbox $mol_check_box
+							checked? <=> done?
+							click? <=> toggle_done? null
+						<= Edit_button $mol_button
+							click? <=> toggle_edit_mode? null
+							sub / <= Edit_icon $mol_icon_pencil
+				<= Text_content $mol_list
+					sub /
+						<= Title $bun_tasks_editable_text
+							edit_mode <= edit_mode
+							value? <=> title? \
+							on_edit_enter? <=> quit_edit_mode? null
+						<= Details $bun_tasks_editable_text
+							edit_mode <= edit_mode
+							value? <=> details? \
+							on_edit_enter? <=> quit_edit_mode? null
+
+$bun_tasks_enter_input $mol_string
+	plugins /
+		<= Add_task_hotkey $mol_hotkey
+			key * enter? <=> on_enter? null
+
+$bun_tasks_editable_text $mol_view
+	sub /
+		<= Non_edit $mol_view
+			sub / <= value
+		<= Edit $bun_tasks_enter_input
+			value?next <=> value?next null
+			on_enter? <=> on_edit_enter? null

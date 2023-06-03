@@ -1,0 +1,64 @@
+mol_button {
+	cursor: pointer !important;
+}
+
+[ bun_tasks_bar_row ] {
+	width: 100%;
+	display: flex;
+}
+
+[ bun_tasks_bar ] {
+	flex: 1 0 0;
+	display: flex;
+	flex-direction: column;
+	background-color: #f5f8fc;
+	padding: 10px;
+	border-radius: 8px;
+}
+
+[ done ] {
+	text-decoration: line-through;
+}
+
+[ bun_tasks_bar_task ] {
+	display: flex;
+	flex-direction: column;
+	padding: 15px;
+	margin: 9px 0;
+	background-color: var( --mol_theme_card );
+	border-radius: 8px;
+}
+
+[ bun_tasks_bar_task ]:first-child {
+	margin-top: 0;
+}
+
+[ bun_tasks_task_item ] {
+	padding: 0;
+}
+
+[ bun_tasks_bar_task_content_row ] {
+	padding: 0;
+}
+
+[ bun_tasks_task_item_tools ] {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+[ bun_tasks_task_item_content ] {
+	display: flex;
+	align-items: center;
+}
+
+[ bun_tasks_task_item_title ] {
+	display: flex;
+	justify-content: space-between;
+	font-size: 24px;
+}
+
+[ bun_tasks_task_item_details ] {
+	font-size: 19px;
+	color: #6d6d6d;
+}
