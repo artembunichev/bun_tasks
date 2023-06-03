@@ -45,6 +45,8 @@ namespace $.$$ {
 
 			this.input_title_value( '' )
 			this.input_details_value( '' )
+
+			this.sort_tasks()
 		}
 
 		@ $mol_mem_key
