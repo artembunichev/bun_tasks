@@ -31,7 +31,6 @@ $bun_tasks_bar $mol_view
 
 $bun_tasks_task_item $mol_view
 	edit_mode false
-	done false
 	attr *
 		^
 		done <= done
@@ -41,7 +40,7 @@ $bun_tasks_task_item $mol_view
 				<= Tools $mol_list
 					sub /
 						<= Checkbox $mol_check_box
-							checked? <=> done?
+							checked?next <=> done?next null
 							click? <=> toggle_done? null
 						<= Edit_button $mol_button
 							click? <=> toggle_edit_mode? null
