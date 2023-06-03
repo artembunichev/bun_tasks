@@ -16,14 +16,14 @@ $bun_tasks_bar $mol_view
 				<= Input_title $bun_tasks_enter_input
 					hint \Заголовок
 					value? <=> input_title_value? \
-					on_enter? <=> add_task?
+					on_enter? <=> add_task? null
 				<= Input_details $bun_tasks_enter_input
 					hint \Детали
 					value? <=> input_details_value? \
 					on_enter? <=> add_task?
 		<= List $mol_list
 			rows <= tasks /$mol_view
-				<= Task* $bun_tasks_task_item
+				<= Task*0 $bun_tasks_task_item
 					title? <=> task_title*? \
 					details? <=> task_details*? \
 					done <= task_done* false
