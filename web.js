@@ -4598,6 +4598,7 @@ var $;
                 this.ids([...this.ids(), new_id]);
                 this.input_title_value('');
                 this.input_details_value('');
+                this.sort_tasks();
             }
             task_done(id, next) {
                 return this.task(id)?.done(next) ?? false;
