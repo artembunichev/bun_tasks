@@ -35,7 +35,6 @@ namespace $.$$ {
 			const new_id = this.new_id()
 
 			var new_task = new $bun_tasks_task_model()
-			new_task.id( new_id )
 			new_task.title( this.input_title_value() )
 			new_task.details( this.input_details_value() )
 
@@ -45,8 +44,6 @@ namespace $.$$ {
 
 			this.input_title_value( '' )
 			this.input_details_value( '' )
-
-			this.sort_tasks()
 		}
 
 		@ $mol_mem_key
@@ -54,22 +51,18 @@ namespace $.$$ {
 			return this.task( id )?.done( next ) ?? false
 		}
 
-		sort_tasks() {
-			this.ids(
-				this.ids().slice().sort( ( a, b )=> {
-					return Number( this.task_done( a ) ) - Number( this.task_done( b ) )
-				} )
-			)
+		tasks_sorted() {
+			return this.ids().sort( ( a, b )=> {
+				return Number( this.task_done( a ) ) - Number( this.task_done( b ) )
+			} )
 		}
 
 		toggle_task_done( id: number ) {
 			this.task_done( id, !this.task_done( id ) )
-			this.sort_tasks()
 		}
 
-		@ $mol_mem
 		tasks() {
-			return this.ids().map( id => this.Task( id ) )
+			return this.tasks_sorted().map( id => this.Task( id ) )
 		}
 
 	}
