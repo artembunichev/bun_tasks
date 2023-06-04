@@ -1350,21 +1350,6 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $mol_window extends $mol_object {
-        static size() {
-            return {
-                width: 1024,
-                height: 768,
-            };
-        }
-    }
-    $.$mol_window = $mol_window;
-})($ || ($ = {}));
-//mol/window/window.node.ts
-;
-"use strict";
-var $;
-(function ($) {
 })($ || ($ = {}));
 //mol/dom/context/context.ts
 ;
@@ -1977,6 +1962,78 @@ var $;
     $.$mol_dom_context = new $node.jsdom.JSDOM('', { url: 'https://localhost/' }).window;
 })($ || ($ = {}));
 //mol/dom/context/context.node.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_state_local extends $mol_object {
+        static 'native()';
+        static native() {
+            if (this['native()'])
+                return this['native()'];
+            check: try {
+                const native = $mol_dom_context.localStorage;
+                if (!native)
+                    break check;
+                native.setItem('', '');
+                native.removeItem('');
+                return this['native()'] = native;
+            }
+            catch (error) {
+                console.warn(error);
+            }
+            return this['native()'] = {
+                getItem(key) {
+                    return this[':' + key];
+                },
+                setItem(key, value) {
+                    this[':' + key] = value;
+                },
+                removeItem(key) {
+                    this[':' + key] = void 0;
+                }
+            };
+        }
+        static changes(next) { return next; }
+        static value(key, next) {
+            this.changes();
+            if (next === void 0)
+                return JSON.parse(this.native().getItem(key) || 'null');
+            if (next === null)
+                this.native().removeItem(key);
+            else
+                this.native().setItem(key, JSON.stringify(next));
+            return next;
+        }
+        prefix() { return ''; }
+        value(key, next) {
+            return $mol_state_local.value(this.prefix() + '.' + key, next);
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_state_local, "changes", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_state_local, "value", null);
+    $.$mol_state_local = $mol_state_local;
+})($ || ($ = {}));
+//mol/state/local/local.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_window extends $mol_object {
+        static size() {
+            return {
+                width: 1024,
+                height: 768,
+            };
+        }
+    }
+    $.$mol_window = $mol_window;
+})($ || ($ = {}));
+//mol/window/window.node.ts
 ;
 "use strict";
 var $;
@@ -4714,10 +4771,12 @@ var $;
         }
         Bar_left() {
             const obj = new this.$.$bun_tasks_bar();
+            obj.id = () => 1;
             return obj;
         }
         Bar_right() {
             const obj = new this.$.$bun_tasks_bar();
+            obj.id = () => 2;
             return obj;
         }
         Bar_row() {
@@ -5076,16 +5135,22 @@ var $;
 var $;
 (function ($) {
     class $bun_tasks_task_model extends $mol_object {
+        id(next) {
+            return next ?? '0-0';
+        }
         title(next) {
-            return next ?? '';
+            return $mol_state_local.value(`task-${this.id()}-title`, next) ?? '';
         }
         details(next) {
-            return next ?? '';
+            return $mol_state_local.value(`task-${this.id()}-details`, next) ?? '';
         }
         done(next) {
-            return next ?? false;
+            return $mol_state_local.value(`task-${this.id()}-done`, next) ?? false;
         }
     }
+    __decorate([
+        $mol_mem
+    ], $bun_tasks_task_model.prototype, "id", null);
     __decorate([
         $mol_mem
     ], $bun_tasks_task_model.prototype, "title", null);
@@ -5105,20 +5170,29 @@ var $;
     var $$;
     (function ($$) {
         class $bun_tasks_bar extends $.$bun_tasks_bar {
+            id(next) {
+                return next ?? 0;
+            }
             ids(next) {
-                return next ?? [];
+                return $mol_state_local.value(`task-ids-${this.id()}`, next) ?? [];
+            }
+            ordinal_ids() {
+                return this.ids().map(id => Number(id.split('-').at(-1)));
             }
             new_id() {
-                return Math.max(0, ...this.ids()) + 1;
+                return `${this.id()}-${Math.max(0, ...this.ordinal_ids()) + 1}`;
             }
             task(id, next) {
                 return next ?? null;
             }
             task_title(id, next) {
-                return this.task(id)?.title(next) ?? '';
+                return $mol_state_local.value(`task-${id}-title`, next) ?? this.task(id)?.title(next) ?? '';
             }
             task_details(id, next) {
-                return this.task(id)?.details(next) ?? '';
+                return $mol_state_local.value(`task-${id}-details`, next) ?? this.task(id)?.details(next) ?? '';
+            }
+            task_done(id, next) {
+                return $mol_state_local.value(`task-${id}-done`, next) ?? this.task(id)?.done(next) ?? false;
             }
             add_task() {
                 if (!this.input_title_value() && !this.input_details_value()) {
@@ -5126,15 +5200,13 @@ var $;
                 }
                 const new_id = this.new_id();
                 var new_task = new $bun_tasks_task_model();
+                new_task.id(new_id);
                 new_task.title(this.input_title_value());
                 new_task.details(this.input_details_value());
                 this.task(new_id, new_task);
                 this.ids([...this.ids(), new_id]);
                 this.input_title_value('');
                 this.input_details_value('');
-            }
-            task_done(id, next) {
-                return this.task(id)?.done(next) ?? false;
             }
             tasks_sorted() {
                 return this.ids().sort((a, b) => {
@@ -5150,7 +5222,13 @@ var $;
         }
         __decorate([
             $mol_mem
+        ], $bun_tasks_bar.prototype, "id", null);
+        __decorate([
+            $mol_mem
         ], $bun_tasks_bar.prototype, "ids", null);
+        __decorate([
+            $mol_mem
+        ], $bun_tasks_bar.prototype, "ordinal_ids", null);
         __decorate([
             $mol_mem_key
         ], $bun_tasks_bar.prototype, "task", null);
@@ -6964,6 +7042,40 @@ var $;
 ;
 "use strict";
 var $;
+(function ($) {
+    $mol_test({
+        'local get set delete'() {
+            var key = '$mol_state_local_test:' + Math.random();
+            $mol_assert_equal($mol_state_local.value(key), null);
+            $mol_state_local.value(key, 123);
+            $mol_assert_equal($mol_state_local.value(key), 123);
+            $mol_state_local.value(key, null);
+            $mol_assert_equal($mol_state_local.value(key), null);
+        },
+    });
+})($ || ($ = {}));
+//mol/state/local/local.test.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test_mocks.push(context => {
+        class $mol_state_local_mock extends $mol_state_local {
+            static state = {};
+            static value(key, next = this.state[key]) {
+                return this.state[key] = (next || null);
+            }
+        }
+        __decorate([
+            $mol_mem_key
+        ], $mol_state_local_mock, "value", null);
+        context.$mol_state_local = $mol_state_local_mock;
+    });
+})($ || ($ = {}));
+//mol/state/local/local.mock.test.ts
+;
+"use strict";
+var $;
 (function ($_1) {
     $mol_test_mocks.push($ => {
         $.$mol_after_tick = $mol_after_mock_commmon;
@@ -8198,97 +8310,6 @@ var $;
     });
 })($ || ($ = {}));
 //mol/tree/tree.test.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_state_local extends $mol_object {
-        static 'native()';
-        static native() {
-            if (this['native()'])
-                return this['native()'];
-            check: try {
-                const native = $mol_dom_context.localStorage;
-                if (!native)
-                    break check;
-                native.setItem('', '');
-                native.removeItem('');
-                return this['native()'] = native;
-            }
-            catch (error) {
-                console.warn(error);
-            }
-            return this['native()'] = {
-                getItem(key) {
-                    return this[':' + key];
-                },
-                setItem(key, value) {
-                    this[':' + key] = value;
-                },
-                removeItem(key) {
-                    this[':' + key] = void 0;
-                }
-            };
-        }
-        static changes(next) { return next; }
-        static value(key, next) {
-            this.changes();
-            if (next === void 0)
-                return JSON.parse(this.native().getItem(key) || 'null');
-            if (next === null)
-                this.native().removeItem(key);
-            else
-                this.native().setItem(key, JSON.stringify(next));
-            return next;
-        }
-        prefix() { return ''; }
-        value(key, next) {
-            return $mol_state_local.value(this.prefix() + '.' + key, next);
-        }
-    }
-    __decorate([
-        $mol_mem
-    ], $mol_state_local, "changes", null);
-    __decorate([
-        $mol_mem_key
-    ], $mol_state_local, "value", null);
-    $.$mol_state_local = $mol_state_local;
-})($ || ($ = {}));
-//mol/state/local/local.ts
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'local get set delete'() {
-            var key = '$mol_state_local_test:' + Math.random();
-            $mol_assert_equal($mol_state_local.value(key), null);
-            $mol_state_local.value(key, 123);
-            $mol_assert_equal($mol_state_local.value(key), 123);
-            $mol_state_local.value(key, null);
-            $mol_assert_equal($mol_state_local.value(key), null);
-        },
-    });
-})($ || ($ = {}));
-//mol/state/local/local.test.ts
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test_mocks.push(context => {
-        class $mol_state_local_mock extends $mol_state_local {
-            static state = {};
-            static value(key, next = this.state[key]) {
-                return this.state[key] = (next || null);
-            }
-        }
-        __decorate([
-            $mol_mem_key
-        ], $mol_state_local_mock, "value", null);
-        context.$mol_state_local = $mol_state_local_mock;
-    });
-})($ || ($ = {}));
-//mol/state/local/local.mock.test.ts
 ;
 "use strict";
 //mol/charset/encoding/encoding.ts

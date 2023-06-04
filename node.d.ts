@@ -321,15 +321,6 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_window extends $mol_object {
-        static size(): {
-            width: number;
-            height: number;
-        };
-    }
-}
-
-declare namespace $ {
     var $mol_dom_context: typeof globalThis;
 }
 
@@ -485,6 +476,30 @@ declare namespace $ {
 }
 
 declare namespace $ {
+}
+
+declare namespace $ {
+    class $mol_state_local<Value> extends $mol_object {
+        static 'native()': Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
+        static native(): Storage | {
+            getItem(key: string): any;
+            setItem(key: string, value: string): void;
+            removeItem(key: string): void;
+        };
+        static changes(next?: StorageEvent): StorageEvent | undefined;
+        static value<Value>(key: string, next?: Value | null): Value | null;
+        prefix(): string;
+        value(key: string, next?: Value): Value | null;
+    }
+}
+
+declare namespace $ {
+    class $mol_window extends $mol_object {
+        static size(): {
+            width: number;
+            height: number;
+        };
+    }
 }
 
 declare namespace $ {
@@ -1561,6 +1576,7 @@ declare namespace $ {
 
 declare namespace $ {
     class $bun_tasks_task_model extends $mol_object {
+        id(next?: string): string;
         title(next?: string): string;
         details(next?: string): string;
         done(next?: boolean): boolean;
@@ -1569,15 +1585,17 @@ declare namespace $ {
 
 declare namespace $.$$ {
     class $bun_tasks_bar extends $.$bun_tasks_bar {
-        ids(next?: Array<number>): number[];
-        new_id(): number;
-        task(id: number, next?: $bun_tasks_task_model): $bun_tasks_task_model | null;
-        task_title(id: number, next?: string): string;
-        task_details(id: number, next?: string): string;
+        id(next?: number): number;
+        ids(next?: Array<string>): string[];
+        ordinal_ids(): number[];
+        new_id(): string;
+        task(id: string, next?: $bun_tasks_task_model): $bun_tasks_task_model | null;
+        task_title(id: string, next?: string): string;
+        task_details(id: string, next?: string): string;
+        task_done(id: string, next?: boolean): boolean;
         add_task(): void;
-        task_done(id: number, next?: boolean): boolean;
-        tasks_sorted(): number[];
-        toggle_task_done(id: number): void;
+        tasks_sorted(): string[];
+        toggle_task_done(id: string): void;
         tasks(): $bun_tasks_task_item[];
     }
     class $bun_tasks_task_item extends $.$bun_tasks_task_item {
