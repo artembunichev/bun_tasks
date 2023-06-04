@@ -4962,7 +4962,7 @@ var $;
             return obj;
         }
         Edit_button() {
-            const obj = new this.$.$mol_button();
+            const obj = new this.$.$mol_button_minor();
             obj.click = (next) => this.toggle_edit_mode(next);
             obj.sub = () => [
                 this.Edit_icon()

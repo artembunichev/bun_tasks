@@ -1417,7 +1417,7 @@ declare namespace $ {
         Checkbox(): $mol_check_box;
         toggle_edit_mode(next?: any): any;
         Edit_icon(): $mol_icon_pencil;
-        Edit_button(): $$.$mol_button;
+        Edit_button(): $mol_button_minor;
         Tools(): $$.$mol_list;
         title(next?: any): string;
         quit_edit_mode(next?: any): any;
