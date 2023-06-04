@@ -7,7 +7,9 @@ $bun_tasks $mol_page
 		<= Bar_row $mol_row
 			sub /
 				<= Bar_left $bun_tasks_bar
+					id 1
 				<= Bar_right $bun_tasks_bar
+					id 2
 
 $bun_tasks_bar $mol_view
 	sub /
