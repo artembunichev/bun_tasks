@@ -23,23 +23,41 @@ namespace $.$$ {
 
 
 		@ $mol_mem_key
-		task( id: string, next?: $bun_tasks_task_model ) {
-			return next ?? null
+		task( id: string, next?: $bun_tasks_task_model | null ) {
+			var key = `task-${ id }`
+
+			if ( next === undefined ) {
+				var model_data = $mol_state_local.value( key, next )
+
+				if ( model_data ) {
+					var model = new $bun_tasks_task_model( id )
+					model.data( model_data )
+					return model
+				}
+
+				return null
+			}
+
+			if ( next === null ) {
+				return $mol_state_local.value( key, null )
+			}
+
+			return next
 		}
 
 		@ $mol_mem_key
 		task_title( id: string, next?: string ) {
-			return $mol_state_local.value( `task-${ id }-title`, next ) ?? this.task( id )?.title( next ) ?? ''
+			return this.task( id )?.title( next ) ?? ''
 		}
 
 		@ $mol_mem_key
 		task_details( id: string, next?: string ) {
-			return $mol_state_local.value( `task-${ id }-details`, next ) ?? this.task( id )?.details( next ) ?? ''
+			return this.task( id )?.details( next ) ?? ''
 		}
 
 		@ $mol_mem_key
 		task_done( id: string, next?: boolean ) {
-			return $mol_state_local.value( `task-${ id }-done`, next ) ?? this.task( id )?.done( next ) ?? false
+			return this.task( id )?.done( next ) ?? false
 		}
 
 		add_task() {
@@ -48,8 +66,7 @@ namespace $.$$ {
 			}
 
 			const new_id = this.new_id()
-			var new_task = new $bun_tasks_task_model()
-			new_task.id( new_id )
+			var new_task = new $bun_tasks_task_model( new_id )
 			new_task.title( this.input_title_value() )
 			new_task.details( this.input_details_value() )
 
@@ -61,14 +78,14 @@ namespace $.$$ {
 			this.input_details_value( '' )
 		}
 
+		toggle_task_done( id: string ) {
+			this.task_done( id, !this.task_done( id ) )
+		}
+
 		tasks_sorted() {
 			return this.ids().sort( ( a, b )=> {
 				return Number( this.task_done( a ) ) - Number( this.task_done( b ) )
 			} )
-		}
-
-		toggle_task_done( id: string ) {
-			this.task_done( id, !this.task_done( id ) )
 		}
 
 		tasks() {
