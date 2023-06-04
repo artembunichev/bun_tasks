@@ -1,11 +1,6 @@
 namespace $ {
 
-	export class $bun_tasks_task_model {
-
-		@ $mol_mem
-		id( next?: number ) {
-			return next ?? 0 
-		}
+	export class $bun_tasks_task_model extends $mol_object {
 
 		@ $mol_mem
 		title( next?: string ) {
