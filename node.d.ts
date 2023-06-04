@@ -14,7 +14,67 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    const $mol_ambient_ref: unique symbol;
+    type $mol_ambient_context = $;
+    function $mol_ambient(this: $ | void, overrides: Partial<$>): $;
+}
+
+declare namespace $ {
+    function $mol_delegate<Value extends object>(proto: Value, target: () => Value): Value;
+}
+
+declare namespace $ {
+    const $mol_owning_map: WeakMap<any, any>;
+    function $mol_owning_allow<Having>(having: Having): having is Having & {
+        destructor(): void;
+    };
+    function $mol_owning_get<Having, Owner extends object>(having: Having, Owner?: {
+        new (): Owner;
+    }): Owner | null;
+    function $mol_owning_check<Owner, Having>(owner: Owner, having: Having): having is Having & {
+        destructor(): void;
+    };
+    function $mol_owning_catch<Owner, Having>(owner: Owner, having: Having): boolean;
+}
+
+declare namespace $ {
     function $mol_fail(error: any): never;
+}
+
+declare namespace $ {
+    function $mol_fail_hidden(error: any): never;
+}
+
+declare namespace $ {
+    type $mol_type_writable<T> = {
+        -readonly [P in keyof T]: T[P];
+    };
+}
+
+declare namespace $ {
+    class $mol_object2 {
+        static $: typeof $$;
+        [Symbol.toStringTag]: string;
+        [$mol_ambient_ref]: typeof $$;
+        get $(): $;
+        set $(next: $);
+        static create<Instance>(this: new (init?: (instance: any) => void) => Instance, init?: (instance: $mol_type_writable<Instance>) => void): Instance;
+        static [Symbol.toPrimitive](): string;
+        static toString(): string;
+        destructor(): void;
+        toString(): string;
+        toJSON(): any;
+    }
+}
+
+declare namespace $ {
+    namespace $$ { }
+    const $mol_object_field: unique symbol;
+    class $mol_object extends $mol_object2 {
+        static make<Instance>(this: {
+            new (): Instance;
+        }, config: Partial<Instance>): Instance;
+    }
 }
 
 declare namespace $ {
@@ -110,56 +170,6 @@ declare namespace $ {
         complete_pubs(): void;
         absorb(quant?: $mol_wire_cursor): void;
         get pub_empty(): boolean;
-    }
-}
-
-declare namespace $ {
-    const $mol_ambient_ref: unique symbol;
-    type $mol_ambient_context = $;
-    function $mol_ambient(this: $ | void, overrides: Partial<$>): $;
-}
-
-declare namespace $ {
-    function $mol_delegate<Value extends object>(proto: Value, target: () => Value): Value;
-}
-
-declare namespace $ {
-    const $mol_owning_map: WeakMap<any, any>;
-    function $mol_owning_allow<Having>(having: Having): having is Having & {
-        destructor(): void;
-    };
-    function $mol_owning_get<Having, Owner extends object>(having: Having, Owner?: {
-        new (): Owner;
-    }): Owner | null;
-    function $mol_owning_check<Owner, Having>(owner: Owner, having: Having): having is Having & {
-        destructor(): void;
-    };
-    function $mol_owning_catch<Owner, Having>(owner: Owner, having: Having): boolean;
-}
-
-declare namespace $ {
-    function $mol_fail_hidden(error: any): never;
-}
-
-declare namespace $ {
-    type $mol_type_writable<T> = {
-        -readonly [P in keyof T]: T[P];
-    };
-}
-
-declare namespace $ {
-    class $mol_object2 {
-        static $: typeof $$;
-        [Symbol.toStringTag]: string;
-        [$mol_ambient_ref]: typeof $$;
-        get $(): $;
-        set $(next: $);
-        static create<Instance>(this: new (init?: (instance: any) => void) => Instance, init?: (instance: $mol_type_writable<Instance>) => void): Instance;
-        static [Symbol.toPrimitive](): string;
-        static toString(): string;
-        destructor(): void;
-        toString(): string;
-        toJSON(): any;
     }
 }
 
@@ -308,16 +318,6 @@ declare namespace $ {
 declare namespace $ {
     let $mol_mem: typeof $mol_wire_solo;
     let $mol_mem_key: typeof $mol_wire_plex;
-}
-
-declare namespace $ {
-    namespace $$ { }
-    const $mol_object_field: unique symbol;
-    class $mol_object extends $mol_object2 {
-        static make<Instance>(this: {
-            new (): Instance;
-        }, config: Partial<Instance>): Instance;
-    }
 }
 
 declare namespace $ {
@@ -1560,8 +1560,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $bun_tasks_task_model {
-        id(next?: number): number;
+    class $bun_tasks_task_model extends $mol_object {
         title(next?: string): string;
         details(next?: string): string;
         done(next?: boolean): boolean;
@@ -1577,7 +1576,7 @@ declare namespace $.$$ {
         task_details(id: number, next?: string): string;
         add_task(): void;
         task_done(id: number, next?: boolean): boolean;
-        sort_tasks(): void;
+        tasks_sorted(): number[];
         toggle_task_done(id: number): void;
         tasks(): $bun_tasks_task_item[];
     }

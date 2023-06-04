@@ -31,12 +31,193 @@ $.$$ = $
 "use strict";
 var $;
 (function ($) {
+    $.$mol_ambient_ref = Symbol('$mol_ambient_ref');
+    function $mol_ambient(overrides) {
+        return Object.setPrototypeOf(overrides, this || $);
+    }
+    $.$mol_ambient = $mol_ambient;
+})($ || ($ = {}));
+//mol/ambient/ambient.ts
+;
+"use strict";
+var $;
+(function ($) {
+    const instances = new WeakSet();
+    function $mol_delegate(proto, target) {
+        const proxy = new Proxy(proto, {
+            get: (_, field) => {
+                const obj = target();
+                let val = Reflect.get(obj, field);
+                if (typeof val === 'function') {
+                    val = val.bind(obj);
+                }
+                return val;
+            },
+            has: (_, field) => Reflect.has(target(), field),
+            set: (_, field, value) => Reflect.set(target(), field, value),
+            getOwnPropertyDescriptor: (_, field) => Reflect.getOwnPropertyDescriptor(target(), field),
+            ownKeys: () => Reflect.ownKeys(target()),
+            getPrototypeOf: () => Reflect.getPrototypeOf(target()),
+            setPrototypeOf: (_, donor) => Reflect.setPrototypeOf(target(), donor),
+            isExtensible: () => Reflect.isExtensible(target()),
+            preventExtensions: () => Reflect.preventExtensions(target()),
+            apply: (_, self, args) => Reflect.apply(target(), self, args),
+            construct: (_, args, retarget) => Reflect.construct(target(), args, retarget),
+            defineProperty: (_, field, descr) => Reflect.defineProperty(target(), field, descr),
+            deleteProperty: (_, field) => Reflect.deleteProperty(target(), field),
+        });
+        instances.add(proxy);
+        return proxy;
+    }
+    $.$mol_delegate = $mol_delegate;
+    Reflect.defineProperty($mol_delegate, Symbol.hasInstance, {
+        value: (obj) => instances.has(obj),
+    });
+})($ || ($ = {}));
+//mol/delegate/delegate.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_owning_map = new WeakMap();
+    function $mol_owning_allow(having) {
+        try {
+            if (!having)
+                return false;
+            if (typeof having !== 'object')
+                return false;
+            if (having instanceof $mol_delegate)
+                return false;
+            if (typeof having['destructor'] !== 'function')
+                return false;
+            return true;
+        }
+        catch {
+            return false;
+        }
+    }
+    $.$mol_owning_allow = $mol_owning_allow;
+    function $mol_owning_get(having, Owner) {
+        if (!$mol_owning_allow(having))
+            return null;
+        while (true) {
+            const owner = $.$mol_owning_map.get(having);
+            if (!owner)
+                return owner;
+            if (!Owner)
+                return owner;
+            if (owner instanceof Owner)
+                return owner;
+            having = owner;
+        }
+    }
+    $.$mol_owning_get = $mol_owning_get;
+    function $mol_owning_check(owner, having) {
+        if (!$mol_owning_allow(having))
+            return false;
+        if ($.$mol_owning_map.get(having) !== owner)
+            return false;
+        return true;
+    }
+    $.$mol_owning_check = $mol_owning_check;
+    function $mol_owning_catch(owner, having) {
+        if (!$mol_owning_allow(having))
+            return false;
+        if ($.$mol_owning_map.get(having))
+            return false;
+        $.$mol_owning_map.set(having, owner);
+        return true;
+    }
+    $.$mol_owning_catch = $mol_owning_catch;
+})($ || ($ = {}));
+//mol/owning/owning.ts
+;
+"use strict";
+var $;
+(function ($) {
     function $mol_fail(error) {
         throw error;
     }
     $.$mol_fail = $mol_fail;
 })($ || ($ = {}));
 //mol/fail/fail.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_fail_hidden(error) {
+        throw error;
+    }
+    $.$mol_fail_hidden = $mol_fail_hidden;
+})($ || ($ = {}));
+//mol/fail/hidden/hidden.ts
+;
+"use strict";
+//mol/type/writable/writable.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_object2 {
+        static $ = $;
+        [Symbol.toStringTag];
+        [$mol_ambient_ref] = null;
+        get $() {
+            if (this[$mol_ambient_ref])
+                return this[$mol_ambient_ref];
+            const owner = $mol_owning_get(this);
+            return this[$mol_ambient_ref] = owner?.$ || $mol_object2.$;
+        }
+        set $(next) {
+            if (this[$mol_ambient_ref])
+                $mol_fail_hidden(new Error('Context already defined'));
+            this[$mol_ambient_ref] = next;
+        }
+        static create(init) {
+            const obj = new this;
+            if (init)
+                init(obj);
+            return obj;
+        }
+        static [Symbol.toPrimitive]() {
+            return this.toString();
+        }
+        static toString() {
+            if (Symbol.toStringTag in this)
+                return this[Symbol.toStringTag];
+            return this.name;
+        }
+        destructor() { }
+        toString() {
+            return this[Symbol.toStringTag] || this.constructor.name + '()';
+        }
+        toJSON() {
+            return this.toString();
+        }
+    }
+    $.$mol_object2 = $mol_object2;
+})($ || ($ = {}));
+//mol/object2/object2.ts
+;
+"use strict";
+var $;
+(function ($_1) {
+    let $$;
+    (function ($$) {
+        let $;
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+    $_1.$mol_object_field = Symbol('$mol_object_field');
+    class $mol_object extends $mol_object2 {
+        static make(config) {
+            return super.create(obj => {
+                for (let key in config)
+                    obj[key] = config[key];
+            });
+        }
+    }
+    $_1.$mol_object = $mol_object;
+})($ || ($ = {}));
+//mol/object/object.ts
 ;
 "use strict";
 var $;
@@ -376,167 +557,6 @@ var $;
     $.$mol_wire_pub_sub = $mol_wire_pub_sub;
 })($ || ($ = {}));
 //mol/wire/pub/sub/sub.ts
-;
-"use strict";
-var $;
-(function ($) {
-    $.$mol_ambient_ref = Symbol('$mol_ambient_ref');
-    function $mol_ambient(overrides) {
-        return Object.setPrototypeOf(overrides, this || $);
-    }
-    $.$mol_ambient = $mol_ambient;
-})($ || ($ = {}));
-//mol/ambient/ambient.ts
-;
-"use strict";
-var $;
-(function ($) {
-    const instances = new WeakSet();
-    function $mol_delegate(proto, target) {
-        const proxy = new Proxy(proto, {
-            get: (_, field) => {
-                const obj = target();
-                let val = Reflect.get(obj, field);
-                if (typeof val === 'function') {
-                    val = val.bind(obj);
-                }
-                return val;
-            },
-            has: (_, field) => Reflect.has(target(), field),
-            set: (_, field, value) => Reflect.set(target(), field, value),
-            getOwnPropertyDescriptor: (_, field) => Reflect.getOwnPropertyDescriptor(target(), field),
-            ownKeys: () => Reflect.ownKeys(target()),
-            getPrototypeOf: () => Reflect.getPrototypeOf(target()),
-            setPrototypeOf: (_, donor) => Reflect.setPrototypeOf(target(), donor),
-            isExtensible: () => Reflect.isExtensible(target()),
-            preventExtensions: () => Reflect.preventExtensions(target()),
-            apply: (_, self, args) => Reflect.apply(target(), self, args),
-            construct: (_, args, retarget) => Reflect.construct(target(), args, retarget),
-            defineProperty: (_, field, descr) => Reflect.defineProperty(target(), field, descr),
-            deleteProperty: (_, field) => Reflect.deleteProperty(target(), field),
-        });
-        instances.add(proxy);
-        return proxy;
-    }
-    $.$mol_delegate = $mol_delegate;
-    Reflect.defineProperty($mol_delegate, Symbol.hasInstance, {
-        value: (obj) => instances.has(obj),
-    });
-})($ || ($ = {}));
-//mol/delegate/delegate.ts
-;
-"use strict";
-var $;
-(function ($) {
-    $.$mol_owning_map = new WeakMap();
-    function $mol_owning_allow(having) {
-        try {
-            if (!having)
-                return false;
-            if (typeof having !== 'object')
-                return false;
-            if (having instanceof $mol_delegate)
-                return false;
-            if (typeof having['destructor'] !== 'function')
-                return false;
-            return true;
-        }
-        catch {
-            return false;
-        }
-    }
-    $.$mol_owning_allow = $mol_owning_allow;
-    function $mol_owning_get(having, Owner) {
-        if (!$mol_owning_allow(having))
-            return null;
-        while (true) {
-            const owner = $.$mol_owning_map.get(having);
-            if (!owner)
-                return owner;
-            if (!Owner)
-                return owner;
-            if (owner instanceof Owner)
-                return owner;
-            having = owner;
-        }
-    }
-    $.$mol_owning_get = $mol_owning_get;
-    function $mol_owning_check(owner, having) {
-        if (!$mol_owning_allow(having))
-            return false;
-        if ($.$mol_owning_map.get(having) !== owner)
-            return false;
-        return true;
-    }
-    $.$mol_owning_check = $mol_owning_check;
-    function $mol_owning_catch(owner, having) {
-        if (!$mol_owning_allow(having))
-            return false;
-        if ($.$mol_owning_map.get(having))
-            return false;
-        $.$mol_owning_map.set(having, owner);
-        return true;
-    }
-    $.$mol_owning_catch = $mol_owning_catch;
-})($ || ($ = {}));
-//mol/owning/owning.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_fail_hidden(error) {
-        throw error;
-    }
-    $.$mol_fail_hidden = $mol_fail_hidden;
-})($ || ($ = {}));
-//mol/fail/hidden/hidden.ts
-;
-"use strict";
-//mol/type/writable/writable.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_object2 {
-        static $ = $;
-        [Symbol.toStringTag];
-        [$mol_ambient_ref] = null;
-        get $() {
-            if (this[$mol_ambient_ref])
-                return this[$mol_ambient_ref];
-            const owner = $mol_owning_get(this);
-            return this[$mol_ambient_ref] = owner?.$ || $mol_object2.$;
-        }
-        set $(next) {
-            if (this[$mol_ambient_ref])
-                $mol_fail_hidden(new Error('Context already defined'));
-            this[$mol_ambient_ref] = next;
-        }
-        static create(init) {
-            const obj = new this;
-            if (init)
-                init(obj);
-            return obj;
-        }
-        static [Symbol.toPrimitive]() {
-            return this.toString();
-        }
-        static toString() {
-            if (Symbol.toStringTag in this)
-                return this[Symbol.toStringTag];
-            return this.name;
-        }
-        destructor() { }
-        toString() {
-            return this[Symbol.toStringTag] || this.constructor.name + '()';
-        }
-        toJSON() {
-            return this.toString();
-        }
-    }
-    $.$mol_object2 = $mol_object2;
-})($ || ($ = {}));
-//mol/object2/object2.ts
 ;
 "use strict";
 var $;
@@ -1334,26 +1354,6 @@ var $;
     $.$mol_mem_key = $mol_wire_plex;
 })($ || ($ = {}));
 //mol/mem/mem.ts
-;
-"use strict";
-var $;
-(function ($_1) {
-    let $$;
-    (function ($$) {
-        let $;
-    })($$ = $_1.$$ || ($_1.$$ = {}));
-    $_1.$mol_object_field = Symbol('$mol_object_field');
-    class $mol_object extends $mol_object2 {
-        static make(config) {
-            return super.create(obj => {
-                for (let key in config)
-                    obj[key] = config[key];
-            });
-        }
-    }
-    $_1.$mol_object = $mol_object;
-})($ || ($ = {}));
-//mol/object/object.ts
 ;
 "use strict";
 var $;
@@ -5083,10 +5083,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $bun_tasks_task_model {
-        id(next) {
-            return next ?? 0;
-        }
+    class $bun_tasks_task_model extends $mol_object {
         title(next) {
             return next ?? '';
         }
@@ -5097,9 +5094,6 @@ var $;
             return next ?? false;
         }
     }
-    __decorate([
-        $mol_mem
-    ], $bun_tasks_task_model.prototype, "id", null);
     __decorate([
         $mol_mem
     ], $bun_tasks_task_model.prototype, "title", null);
@@ -5140,29 +5134,26 @@ var $;
                 }
                 const new_id = this.new_id();
                 var new_task = new $bun_tasks_task_model();
-                new_task.id(new_id);
                 new_task.title(this.input_title_value());
                 new_task.details(this.input_details_value());
                 this.task(new_id, new_task);
                 this.ids([...this.ids(), new_id]);
                 this.input_title_value('');
                 this.input_details_value('');
-                this.sort_tasks();
             }
             task_done(id, next) {
                 return this.task(id)?.done(next) ?? false;
             }
-            sort_tasks() {
-                this.ids(this.ids().slice().sort((a, b) => {
+            tasks_sorted() {
+                return this.ids().sort((a, b) => {
                     return Number(this.task_done(a)) - Number(this.task_done(b));
-                }));
+                });
             }
             toggle_task_done(id) {
                 this.task_done(id, !this.task_done(id));
-                this.sort_tasks();
             }
             tasks() {
-                return this.ids().map(id => this.Task(id));
+                return this.tasks_sorted().map(id => this.Task(id));
             }
         }
         __decorate([
@@ -5180,9 +5171,6 @@ var $;
         __decorate([
             $mol_mem_key
         ], $bun_tasks_bar.prototype, "task_done", null);
-        __decorate([
-            $mol_mem
-        ], $bun_tasks_bar.prototype, "tasks", null);
         $$.$bun_tasks_bar = $bun_tasks_bar;
         class $bun_tasks_task_item extends $.$bun_tasks_task_item {
             edit_mode(next) {
