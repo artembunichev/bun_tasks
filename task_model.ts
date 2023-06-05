@@ -12,24 +12,23 @@ namespace $ {
 			super()
 		}
 
+		data_default: Task_data = { title: '', details: '', done: false }
+
 		@ $mol_mem
+		data( data?: Task_data ) {
+			return $mol_state_local.value( `task-${ this.id }`, data ) ?? this.data_default
+		}
+
 		title( next?: string ) {
 			return this.value( 'title', next )
 		}
 
-		@ $mol_mem
 		details( next?: string ) {
 			return this.value( 'details', next )
 		}
 
-		@ $mol_mem
 		done( next?: boolean ) {
 			return this.value( 'done', next )
-		}
-
-		@ $mol_mem
-		data( data?: Task_data ): Task_data {
-			return $mol_state_local.value( `task-${ this.id }`, data ) ?? { title: '', details: '', done: false }
 		}
 
 	}
