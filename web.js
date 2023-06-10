@@ -201,26 +201,6 @@ var $;
 ;
 "use strict";
 var $;
-(function ($_1) {
-    let $$;
-    (function ($$) {
-        let $;
-    })($$ = $_1.$$ || ($_1.$$ = {}));
-    $_1.$mol_object_field = Symbol('$mol_object_field');
-    class $mol_object extends $mol_object2 {
-        static make(config) {
-            return super.create(obj => {
-                for (let key in config)
-                    obj[key] = config[key];
-            });
-        }
-    }
-    $_1.$mol_object = $mol_object;
-})($ || ($ = {}));
-//mol/object/object.ts
-;
-"use strict";
-var $;
 (function ($) {
     let $mol_wire_cursor;
     (function ($mol_wire_cursor) {
@@ -1360,6 +1340,81 @@ var $;
     $.$mol_mem_key = $mol_wire_plex;
 })($ || ($ = {}));
 //mol/mem/mem.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_store extends $mol_object2 {
+        data_default;
+        constructor(data_default) {
+            super();
+            this.data_default = data_default;
+        }
+        data(next) {
+            return next === undefined ? this.data_default : next;
+        }
+        snapshot(next) {
+            return JSON.stringify(this.data(next === undefined ? next : JSON.parse(next)));
+        }
+        value(key, next) {
+            const data = this.data();
+            if (next === undefined)
+                return data && data[key];
+            const Constr = Reflect.getPrototypeOf(data).constructor;
+            this.data(Object.assign(new Constr, data, { [key]: next }));
+            return next;
+        }
+        selection(key, next = [0, 0]) {
+            return next;
+        }
+        sub(key, lens) {
+            if (!lens)
+                lens = new $mol_store();
+            const data = lens.data;
+            lens.data = next => {
+                if (next == undefined) {
+                    return this.value(key) ?? lens.data_default;
+                }
+                return this.value(key, next);
+            };
+            return lens;
+        }
+        reset() {
+            this.data(this.data_default);
+        }
+        active() {
+            return true;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_store.prototype, "data", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_store.prototype, "selection", null);
+    $.$mol_store = $mol_store;
+})($ || ($ = {}));
+//mol/store/store.ts
+;
+"use strict";
+var $;
+(function ($_1) {
+    let $$;
+    (function ($$) {
+        let $;
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+    $_1.$mol_object_field = Symbol('$mol_object_field');
+    class $mol_object extends $mol_object2 {
+        static make(config) {
+            return super.create(obj => {
+                for (let key in config)
+                    obj[key] = config[key];
+            });
+        }
+    }
+    $_1.$mol_object = $mol_object;
+})($ || ($ = {}));
+//mol/object/object.ts
 ;
 "use strict";
 var $;
@@ -4605,32 +4660,29 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $bun_tasks_task_model extends $mol_object {
-        id(next) {
-            return next ?? '0-0';
+    class $bun_tasks_task_model extends $mol_store {
+        id;
+        constructor(id) {
+            super();
+            this.id = id;
+        }
+        data_default = { title: '', details: '', done: false };
+        data(data) {
+            return $mol_state_local.value(`task-${this.id}`, data) ?? this.data_default;
         }
         title(next) {
-            return $mol_state_local.value(`task-${this.id()}-title`, next) ?? '';
+            return this.value('title', next);
         }
         details(next) {
-            return $mol_state_local.value(`task-${this.id()}-details`, next) ?? '';
+            return this.value('details', next);
         }
         done(next) {
-            return $mol_state_local.value(`task-${this.id()}-done`, next) ?? false;
+            return this.value('done', next);
         }
     }
     __decorate([
         $mol_mem
-    ], $bun_tasks_task_model.prototype, "id", null);
-    __decorate([
-        $mol_mem
-    ], $bun_tasks_task_model.prototype, "title", null);
-    __decorate([
-        $mol_mem
-    ], $bun_tasks_task_model.prototype, "details", null);
-    __decorate([
-        $mol_mem
-    ], $bun_tasks_task_model.prototype, "done", null);
+    ], $bun_tasks_task_model.prototype, "data", null);
     $.$bun_tasks_task_model = $bun_tasks_task_model;
 })($ || ($ = {}));
 //bun/tasks/task_model.ts
@@ -4654,24 +4706,36 @@ var $;
                 return `${this.id()}-${Math.max(0, ...this.ordinal_ids()) + 1}`;
             }
             task(id, next) {
-                return next ?? null;
+                var key = `task-${id}`;
+                if (next === undefined) {
+                    var model_data = $mol_state_local.value(key, next);
+                    if (model_data) {
+                        var model = new $bun_tasks_task_model(id);
+                        model.data(model_data);
+                        return model;
+                    }
+                    return null;
+                }
+                if (next === null) {
+                    return $mol_state_local.value(key, null);
+                }
+                return next;
             }
             task_title(id, next) {
-                return $mol_state_local.value(`task-${id}-title`, next) ?? this.task(id)?.title(next) ?? '';
+                return this.task(id)?.title(next) ?? '';
             }
             task_details(id, next) {
-                return $mol_state_local.value(`task-${id}-details`, next) ?? this.task(id)?.details(next) ?? '';
+                return this.task(id)?.details(next) ?? '';
             }
             task_done(id, next) {
-                return $mol_state_local.value(`task-${id}-done`, next) ?? this.task(id)?.done(next) ?? false;
+                return this.task(id)?.done(next) ?? false;
             }
             add_task() {
                 if (!this.input_title_value() && !this.input_details_value()) {
                     return;
                 }
                 const new_id = this.new_id();
-                var new_task = new $bun_tasks_task_model();
-                new_task.id(new_id);
+                var new_task = new $bun_tasks_task_model(new_id);
                 new_task.title(this.input_title_value());
                 new_task.details(this.input_details_value());
                 this.task(new_id, new_task);
@@ -4679,13 +4743,13 @@ var $;
                 this.input_title_value('');
                 this.input_details_value('');
             }
+            toggle_task_done(id) {
+                this.task_done(id, !this.task_done(id));
+            }
             tasks_sorted() {
                 return this.ids().sort((a, b) => {
                     return Number(this.task_done(a)) - Number(this.task_done(b));
                 });
-            }
-            toggle_task_done(id) {
-                this.task_done(id, !this.task_done(id));
             }
             tasks() {
                 return this.tasks_sorted().map(id => this.Task(id));

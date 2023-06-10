@@ -17,7 +17,7 @@
   "keywords": [
     "$bun_tasks",
     "$bun",
-    "$mol_object",
+    "$mol_store",
     "$mol",
     "$mol_object2",
     "$mol_ambient",
@@ -58,6 +58,7 @@
     "$mol_wire_plex",
     "$mol_state_local",
     "$mol_state",
+    "$mol_object",
     "$mol_dom_context",
     "$mol_dom",
     "$node",

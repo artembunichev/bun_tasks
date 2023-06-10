@@ -68,16 +68,6 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    namespace $$ { }
-    const $mol_object_field: unique symbol;
-    class $mol_object extends $mol_object2 {
-        static make<Instance>(this: {
-            new (): Instance;
-        }, config: Partial<Instance>): Instance;
-    }
-}
-
-declare namespace $ {
     enum $mol_wire_cursor {
         stale = -1,
         doubt = -2,
@@ -318,6 +308,30 @@ declare namespace $ {
 declare namespace $ {
     let $mol_mem: typeof $mol_wire_solo;
     let $mol_mem_key: typeof $mol_wire_plex;
+}
+
+declare namespace $ {
+    class $mol_store<Data> extends $mol_object2 {
+        data_default?: Data | undefined;
+        constructor(data_default?: Data | undefined);
+        data(next?: Data): NonNullable<Data> | (Data & null);
+        snapshot(next?: string): string;
+        value<Key extends keyof Data>(key: Key, next?: Data[Key]): Data[Key] & {};
+        selection<Key extends keyof Data>(key: Key, next?: number[]): number[];
+        sub<Key extends keyof Data, Lens extends $mol_store<Data[Key]> = $mol_store<NonNullable<Data[Key]>>>(key: Key, lens?: Lens): Lens;
+        reset(): void;
+        active(): boolean;
+    }
+}
+
+declare namespace $ {
+    namespace $$ { }
+    const $mol_object_field: unique symbol;
+    class $mol_object extends $mol_object2 {
+        static make<Instance>(this: {
+            new (): Instance;
+        }, config: Partial<Instance>): Instance;
+    }
 }
 
 declare namespace $ {
@@ -1575,12 +1589,21 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $bun_tasks_task_model extends $mol_object {
-        id(next?: string): string;
+    type Task_data = {
+        title: string;
+        details: string;
+        done: boolean;
+    };
+    export class $bun_tasks_task_model extends $mol_store<Task_data> {
+        readonly id: string;
+        constructor(id: string);
+        data_default: Task_data;
+        data(data?: Task_data): Task_data;
         title(next?: string): string;
         details(next?: string): string;
         done(next?: boolean): boolean;
     }
+    export {};
 }
 
 declare namespace $.$$ {
@@ -1589,13 +1612,13 @@ declare namespace $.$$ {
         ids(next?: Array<string>): string[];
         ordinal_ids(): number[];
         new_id(): string;
-        task(id: string, next?: $bun_tasks_task_model): $bun_tasks_task_model | null;
+        task(id: string, next?: $bun_tasks_task_model | null): $bun_tasks_task_model | null;
         task_title(id: string, next?: string): string;
         task_details(id: string, next?: string): string;
         task_done(id: string, next?: boolean): boolean;
         add_task(): void;
-        tasks_sorted(): string[];
         toggle_task_done(id: string): void;
+        tasks_sorted(): string[];
         tasks(): $bun_tasks_task_item[];
     }
     class $bun_tasks_task_item extends $.$bun_tasks_task_item {
