@@ -6,10 +6,18 @@ $bun_tasks $mol_page
 	body /
 		<= Bar_row $mol_row
 			sub /
+				<= Calendar $mol_date
+					Icon null
+					Trigger null
+					Input_row null
+					showed true
+					value_moment? <=> date_selected? $mol_time_moment
 				<= Bar_left $bun_tasks_bar
-					id 1
+					ord_id 1
+					date_id <= date_selected_id \
 				<= Bar_right $bun_tasks_bar
-					id 2
+					ord_id 2
+					date_id <= date_selected_id \
 
 $bun_tasks_bar $mol_view
 	sub /
@@ -80,3 +88,4 @@ $bun_tasks_editable_text $mol_view
 		<= Edit $bun_tasks_enter_input
 			value?next <=> value?next null
 			on_enter? <=> on_edit_enter? null
+

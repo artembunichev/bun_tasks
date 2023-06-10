@@ -1,10 +1,34 @@
 namespace $.$$ {
 
-	export class $bun_tasks_bar extends $.$bun_tasks_bar {
+	export class $bun_tasks extends $.$bun_tasks {
 
 		@ $mol_mem
-		id( next?: number ) {
+		date_selected( next?: $mol_time_moment ): $mol_time_moment {
+			return next ?? new $mol_time_moment()
+		}
+
+		@ $mol_mem
+		date_selected_id() {
+			var { year, month, day } = this.date_selected()
+			return `${ year }-${ month }-${ day }`
+		}
+
+	}
+
+	export class $bun_tasks_bar extends $.$bun_tasks_bar {
+
+		date_id() {
+			return ``
+		}
+
+		@ $mol_mem
+		ord_id( next?: number ) {
 			return next ?? 0
+		}
+
+		@ $mol_mem
+		id() {
+			return `${ this.date_id() }-${ this.ord_id() }`
 		}
 
 		@ $mol_mem
@@ -13,12 +37,12 @@ namespace $.$$ {
 		}
 
 		@ $mol_mem
-		ordinal_ids() {
+		ord_ids() {
 			return this.ids().map( id => Number( id.split( '-' ).at( -1 ) ) )
 		}
 
 		new_id() {
-			return `${ this.id() }-${ Math.max( 0, ...this.ordinal_ids() ) + 1 }`
+			return `${ this.id() }-${ Math.max( 0, ...this.ord_ids() ) + 1 }`
 		}
 
 		@ $mol_mem_key

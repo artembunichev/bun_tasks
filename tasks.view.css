@@ -2,6 +2,15 @@ mol_button {
 	cursor: pointer !important;
 }
 
+[ bun_tasks_calendar_bubble ] {
+	position: relative;
+	top: 0;
+	left: 0;
+	max-height: 360px !important;
+	box-shadow: none;
+	border: 1px solid #000000;
+}
+
 [ bun_tasks_bar_row ] {
 	width: 100%;
 	display: flex;
