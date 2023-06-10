@@ -6,9 +6,22 @@ mol_button {
 	position: relative;
 	top: 0;
 	left: 0;
-	max-height: 360px !important;
+	max-height: 370px !important;
 	box-shadow: none;
 	border: 1px solid #000000;
+}
+
+[ mol_calendar_holiday ] {
+	color: #ff0000;
+}
+
+[ bun_tasks_calendar ] [ mol_theme="$mol_theme_current" ] {
+	background-color: #41dcea70;
+}
+
+[ mol_calendar_day ] {
+	border-radius: 0;
+	border: 0.1px solid #000000;
 }
 
 [ bun_tasks_bar_row ] {
