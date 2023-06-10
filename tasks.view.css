@@ -14,6 +14,7 @@ mol_button {
 	background-color: #f5f8fc;
 	padding: 10px;
 	border-radius: 8px;
+	border: 1px solid #000000;
 }
 
 [ done ] {
@@ -27,6 +28,7 @@ mol_button {
 	margin: 9px 0;
 	background-color: var( --mol_theme_card );
 	border-radius: 8px;
+	border: 1px solid #000000;
 }
 
 [ bun_tasks_bar_task ]:first-child {
