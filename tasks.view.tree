@@ -30,6 +30,7 @@ $bun_tasks_bar $mol_view
 					details? <=> task_details*? \
 					done <= task_done* false
 					toggle_done? <=> toggle_task_done*? null
+					drop? <=> drop_task*? null
 
 $bun_tasks_task_item $mol_view
 	edit_mode false
@@ -39,24 +40,33 @@ $bun_tasks_task_item $mol_view
 	sub /
 		<= Content $mol_row
 			sub /
-				<= Tools $mol_list
+				<= Left_side $mol_view
 					sub /
-						<= Checkbox $mol_check_box
-							checked?next <=> done?next null
-							click? <=> toggle_done? null
-						<= Edit_button $mol_button_minor
-							click? <=> toggle_edit_mode? null
-							sub / <= Edit_icon $mol_icon_pencil
-				<= Text_content $mol_list
+						<= Tools $mol_list
+							sub /
+								<= Checkbox $mol_check_box
+									checked?next <=> done?next null
+									click? <=> toggle_done? null
+								<= Edit_button $mol_button_minor
+									click? <=> toggle_edit_mode? null
+									sub / <= Edit_icon $mol_icon_pencil
+						<= Text_content $mol_list
+							sub /
+								<= Title $bun_tasks_editable_text
+									edit_mode <= edit_mode
+									value? <=> title? \
+									on_edit_enter? <=> quit_edit_mode? null
+								<= Details $bun_tasks_editable_text
+									edit_mode <= edit_mode
+									value? <=> details? \
+									on_edit_enter? <=> quit_edit_mode? null
+				<= Right_side $mol_view
 					sub /
-						<= Title $bun_tasks_editable_text
-							edit_mode <= edit_mode
-							value? <=> title? \
-							on_edit_enter? <=> quit_edit_mode? null
-						<= Details $bun_tasks_editable_text
-							edit_mode <= edit_mode
-							value? <=> details? \
-							on_edit_enter? <=> quit_edit_mode? null
+						<= Options $mol_view
+							sub /
+								<= Drop_task_button $mol_button_minor
+									sub / <= Drop_task_icon $mol_icon_trash_can_outline
+									click? <=> drop? null
 
 $bun_tasks_enter_input $mol_string
 	plugins /

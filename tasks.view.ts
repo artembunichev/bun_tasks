@@ -21,7 +21,6 @@ namespace $.$$ {
 			return `${ this.id() }-${ Math.max( 0, ...this.ordinal_ids() ) + 1 }`
 		}
 
-
 		@ $mol_mem_key
 		task( id: string, next?: $bun_tasks_task_model | null ) {
 			var key = `task-${ id }`
@@ -80,6 +79,11 @@ namespace $.$$ {
 
 		toggle_task_done( id: string ) {
 			this.task_done( id, !this.task_done( id ) )
+		}
+
+		drop_task( id: string ) {
+			this.task( id, null )
+			this.ids( this.ids().filter( id2 => id2 !== id ) )
 		}
 
 		tasks_sorted() {
