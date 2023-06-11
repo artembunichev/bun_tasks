@@ -1197,64 +1197,46 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_pop extends $mol_view {
-        showed(val?: any): boolean;
-        align_vert(): string;
-        align_hor(): string;
-        prefer(): string;
-        sub(): readonly any[];
-        sub_visible(): readonly any[];
-        Anchor(): any;
-        align(): string;
-        bubble_content(): readonly $mol_view_content[];
-        height_max(): number;
-        Bubble(): $mol_pop_bubble;
-    }
-    class $mol_pop_bubble extends $mol_view {
-        sub(): readonly $mol_view_content[];
-        style(): Record<string, any>;
-        attr(): Record<string, any>;
-        content(): readonly $mol_view_content[];
-        height_max(): number;
-        align(): string;
+    class $mol_row extends $mol_view {
     }
 }
 
 declare namespace $ {
-    let $mol_layer: {
-        readonly hover: $mol_style_func<"var", string[] | "--mol_layer_hover">;
-        readonly focus: $mol_style_func<"var", string[] | "--mol_layer_focus">;
-        readonly speck: $mol_style_func<"var", string[] | "--mol_layer_speck">;
-        readonly float: $mol_style_func<"var", string[] | "--mol_layer_float">;
-        readonly popup: $mol_style_func<"var", string[] | "--mol_layer_popup">;
-    };
 }
 
 declare namespace $ {
+    class $mol_list extends $mol_view {
+        render_visible_only(): boolean;
+        render_over(): number;
+        sub(): readonly $mol_view[];
+        Empty(): $mol_view;
+        Gap_before(): $mol_view;
+        Gap_after(): $mol_view;
+        view_window(): readonly any[];
+        rows(): readonly $mol_view[];
+        gap_before(): number;
+        gap_after(): number;
+    }
+}
+
+declare namespace $ {
+    function $mol_support_css_overflow_anchor(this: $): boolean;
+}
+
+declare namespace $ {
+    let $mol_mem_cached: typeof $mol_wire_probe;
 }
 
 declare namespace $.$$ {
-    class $mol_pop extends $.$mol_pop {
-        showed(next?: boolean): boolean;
-        sub_visible(): any[];
-        height_max(): number;
-        align(): string;
-        align_vert(): "suspense" | "top" | "bottom";
-        align_hor(): "suspense" | "left" | "right";
-        View_port(): $mol_view;
-        view_port(): {
-            width: number;
-            height: number;
-            left: number;
-            right: number;
-            top: number;
-            bottom: number;
-        } | {
-            left: number;
-            top: number;
-            width: number;
-            height: number;
-        };
+    class $mol_list extends $.$mol_list {
+        sub(): readonly $mol_view[];
+        render_visible_only(): boolean;
+        view_window(next?: [number, number]): [number, number];
+        gap_before(): number;
+        gap_after(): number;
+        sub_visible(): $mol_view[];
+        minimal_height(): number;
+        force_render(path: Set<$mol_view>): void;
     }
 }
 
@@ -1269,6 +1251,19 @@ declare namespace $ {
         theme(): string;
         value(): any;
     }
+}
+
+declare namespace $ {
+    let $mol_layer: {
+        readonly hover: $mol_style_func<"var", string[] | "--mol_layer_hover">;
+        readonly focus: $mol_style_func<"var", string[] | "--mol_layer_focus">;
+        readonly speck: $mol_style_func<"var", string[] | "--mol_layer_speck">;
+        readonly float: $mol_style_func<"var", string[] | "--mol_layer_float">;
+        readonly popup: $mol_style_func<"var", string[] | "--mol_layer_popup">;
+    };
+}
+
+declare namespace $ {
 }
 
 declare namespace $ {
@@ -1464,27 +1459,6 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_pick extends $mol_pop {
-        event(): Record<string, any>;
-        Anchor(): $$.$mol_check;
-        keydown(event?: any): any;
-        trigger_enabled(): boolean;
-        trigger_content(): readonly $mol_view_content[];
-        hint(): string;
-        Trigger(): $$.$mol_check;
-    }
-}
-
-declare namespace $.$$ {
-    class $mol_pick extends $.$mol_pick {
-        keydown(event: KeyboardEvent): void;
-    }
-}
-
-declare namespace $ {
-}
-
-declare namespace $ {
     class $mol_svg extends $mol_view {
         dom_name(): string;
         dom_name_space(): string;
@@ -1544,161 +1518,35 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_icon_calendar extends $mol_icon {
+    class $mol_icon_tick extends $mol_icon {
         path(): string;
     }
 }
 
 declare namespace $ {
-    class $mol_icon_calendar_today extends $mol_icon {
+    class $mol_check_box extends $mol_check {
+        Icon(): $mol_icon_tick;
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
+    class $mol_icon_pencil extends $mol_icon {
         path(): string;
     }
 }
 
 declare namespace $ {
-    type $mol_charset_encoding = 'utf8' | 'utf-16le' | 'utf-16be' | 'ibm866' | 'iso-8859-2' | 'iso-8859-3' | 'iso-8859-4' | 'iso-8859-5' | 'iso-8859-6' | 'iso-8859-7' | 'iso-8859-8' | 'iso-8859-8i' | 'iso-8859-10' | 'iso-8859-13' | 'iso-8859-14' | 'iso-8859-15' | 'iso-8859-16' | 'koi8-r' | 'koi8-u' | 'koi8-r' | 'macintosh' | 'windows-874' | 'windows-1250' | 'windows-1251' | 'windows-1252' | 'windows-1253' | 'windows-1254' | 'windows-1255' | 'windows-1256' | 'windows-1257' | 'windows-1258' | 'x-mac-cyrillic' | 'gbk' | 'gb18030' | 'hz-gb-2312' | 'big5' | 'euc-jp' | 'iso-2022-jp' | 'shift-jis' | 'euc-kr' | 'iso-2022-kr';
-}
-
-declare namespace $ {
-    function $mol_charset_decode(buffer: BufferSource, encoding?: $mol_charset_encoding): string;
-}
-
-declare namespace $ {
-    function $mol_charset_encode(value: string): Uint8Array;
-}
-
-declare namespace $ {
-    type $mol_file_type = 'file' | 'dir' | 'link';
-    interface $mol_file_stat {
-        type: $mol_file_type;
-        size: number;
-        atime: Date;
-        mtime: Date;
-        ctime: Date;
-    }
-    class $mol_file_not_found extends Error {
-    }
-    abstract class $mol_file extends $mol_object {
-        static absolute(path: string): $mol_file;
-        static relative(path: string): $mol_file;
-        static base: string;
+    class $mol_icon_trash_can extends $mol_icon {
         path(): string;
-        parent(): $mol_file;
-        abstract stat(next?: $mol_file_stat | null, virt?: 'virt'): $mol_file_stat | null;
-        reset(): void;
-        version(): string;
-        abstract ensure(): void;
-        watcher(): {
-            destructor(): void;
-        };
-        exists(next?: boolean): boolean;
-        type(): "" | $mol_file_type;
-        name(): string;
-        ext(): string;
-        abstract buffer(next?: Uint8Array): Uint8Array;
-        text(next?: string, virt?: 'virt'): string;
-        abstract sub(): $mol_file[];
-        abstract resolve(path: string): $mol_file;
-        abstract relate(base?: $mol_file): string;
-        abstract append(next: Uint8Array | string): void;
-        find(include?: RegExp, exclude?: RegExp): $mol_file[];
-        size(): number;
     }
 }
 
 declare namespace $ {
-    let $mol_mem_cached: typeof $mol_wire_probe;
-}
-
-declare namespace $ {
-    function $mol_compare_array<Value extends ArrayLike<unknown>>(a: Value, b: Value): boolean;
-}
-
-declare namespace $ {
-    class $mol_file_node extends $mol_file {
-        static absolute(path: string): $mol_file_node;
-        static relative(path: string): $mol_file_node;
-        watcher(): {
-            destructor(): void;
-        };
-        stat(next?: $mol_file_stat | null, virt?: 'virt'): $mol_file_stat | null;
-        ensure(): void;
-        buffer(next?: Uint8Array): Uint8Array;
-        sub(): $mol_file[];
-        resolve(path: string): $mol_file;
-        relate(base?: $mol_file): string;
-        append(next: Uint8Array | string): undefined;
-    }
-}
-
-declare namespace $ {
-    function $mol_wire_sync<Host extends object>(obj: Host): (Host extends (...args: infer Args) => infer Res ? Res extends Promise<infer Res2> ? (...args: Args) => Res2 : Host : {}) & { [key in keyof Host]: Host[key] extends (...args: infer Args_1) => Promise<infer Res_1> ? (...args: Args_1) => Res_1 : Host[key]; };
-}
-
-declare namespace $ {
-    let $mol_action: typeof $mol_wire_method;
-}
-
-declare namespace $ {
-    function $mol_dom_parse(text: string, type?: DOMParserSupportedType): Document;
-}
-
-declare namespace $ {
-    class $mol_fetch_response extends $mol_object2 {
-        readonly native: Response;
-        constructor(native: Response);
-        status(): "unknown" | "success" | "inform" | "redirect" | "wrong" | "failed";
-        code(): number;
-        message(): string;
-        headers(): Headers;
-        mime(): string | null;
-        stream(): ReadableStream<Uint8Array> | null;
-        text(): string;
-        json(): unknown;
-        buffer(): ArrayBuffer;
-        xml(): Document;
-        xhtml(): Document;
-        html(): Document;
-    }
-    class $mol_fetch extends $mol_object2 {
-        static request(input: RequestInfo, init?: RequestInit): Promise<Response> & {
-            destructor: () => void;
-        };
-        static response(input: RequestInfo, init?: RequestInit): $mol_fetch_response;
-        static success(input: RequestInfo, init?: RequestInit): $mol_fetch_response;
-        static stream(input: RequestInfo, init?: RequestInit): ReadableStream<Uint8Array> | null;
-        static text(input: RequestInfo, init?: RequestInit): string;
-        static json(input: RequestInfo, init?: RequestInit): unknown;
-        static buffer(input: RequestInfo, init?: RequestInit): ArrayBuffer;
-        static xml(input: RequestInfo, init?: RequestInit): Document;
-        static xhtml(input: RequestInfo, init?: RequestInit): Document;
-        static html(input: RequestInfo, init?: RequestInit): Document;
-    }
-}
-
-declare namespace $ {
-    function $mol_huggingface_run(this: $, space: string, method: string | number, ...data: readonly any[]): readonly any[];
-    function $mol_huggingface_rest(space: string, method: string, ...data: readonly any[]): readonly any[];
-    function $mol_huggingface_ws(space: string, fn_index: number, ...data: readonly any[]): Promise<readonly any[]> & {
-        destructor: () => void;
-    };
-}
-
-declare namespace $ {
-    function $hyoo_lingua_translate(this: $, lang: string, text: string): string;
-}
-
-declare namespace $ {
-    interface $mol_locale_dict {
-        [key: string]: string;
-    }
-    class $mol_locale extends $mol_object {
-        static lang_default(): string;
-        static lang(next?: string): string;
-        static source(lang: string): any;
-        static texts(lang: string, next?: $mol_locale_dict): $mol_locale_dict;
-        static text(key: string): string;
-        static warn(key: string): null;
+    class $mol_icon_trash_can_outline extends $mol_icon {
+        path(): string;
     }
 }
 
@@ -1872,6 +1720,234 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    class $mol_pop extends $mol_view {
+        showed(val?: any): boolean;
+        align_vert(): string;
+        align_hor(): string;
+        prefer(): string;
+        sub(): readonly any[];
+        sub_visible(): readonly any[];
+        Anchor(): any;
+        align(): string;
+        bubble_content(): readonly $mol_view_content[];
+        height_max(): number;
+        Bubble(): $mol_pop_bubble;
+    }
+    class $mol_pop_bubble extends $mol_view {
+        sub(): readonly $mol_view_content[];
+        style(): Record<string, any>;
+        attr(): Record<string, any>;
+        content(): readonly $mol_view_content[];
+        height_max(): number;
+        align(): string;
+    }
+}
+
+declare namespace $.$$ {
+    class $mol_pop extends $.$mol_pop {
+        showed(next?: boolean): boolean;
+        sub_visible(): any[];
+        height_max(): number;
+        align(): string;
+        align_vert(): "suspense" | "top" | "bottom";
+        align_hor(): "suspense" | "left" | "right";
+        View_port(): $mol_view;
+        view_port(): {
+            width: number;
+            height: number;
+            left: number;
+            right: number;
+            top: number;
+            bottom: number;
+        } | {
+            left: number;
+            top: number;
+            width: number;
+            height: number;
+        };
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
+    class $mol_pick extends $mol_pop {
+        event(): Record<string, any>;
+        Anchor(): $$.$mol_check;
+        keydown(event?: any): any;
+        trigger_enabled(): boolean;
+        trigger_content(): readonly $mol_view_content[];
+        hint(): string;
+        Trigger(): $$.$mol_check;
+    }
+}
+
+declare namespace $.$$ {
+    class $mol_pick extends $.$mol_pick {
+        keydown(event: KeyboardEvent): void;
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
+    class $mol_icon_calendar extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_calendar_today extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    type $mol_charset_encoding = 'utf8' | 'utf-16le' | 'utf-16be' | 'ibm866' | 'iso-8859-2' | 'iso-8859-3' | 'iso-8859-4' | 'iso-8859-5' | 'iso-8859-6' | 'iso-8859-7' | 'iso-8859-8' | 'iso-8859-8i' | 'iso-8859-10' | 'iso-8859-13' | 'iso-8859-14' | 'iso-8859-15' | 'iso-8859-16' | 'koi8-r' | 'koi8-u' | 'koi8-r' | 'macintosh' | 'windows-874' | 'windows-1250' | 'windows-1251' | 'windows-1252' | 'windows-1253' | 'windows-1254' | 'windows-1255' | 'windows-1256' | 'windows-1257' | 'windows-1258' | 'x-mac-cyrillic' | 'gbk' | 'gb18030' | 'hz-gb-2312' | 'big5' | 'euc-jp' | 'iso-2022-jp' | 'shift-jis' | 'euc-kr' | 'iso-2022-kr';
+}
+
+declare namespace $ {
+    function $mol_charset_decode(buffer: BufferSource, encoding?: $mol_charset_encoding): string;
+}
+
+declare namespace $ {
+    function $mol_charset_encode(value: string): Uint8Array;
+}
+
+declare namespace $ {
+    type $mol_file_type = 'file' | 'dir' | 'link';
+    interface $mol_file_stat {
+        type: $mol_file_type;
+        size: number;
+        atime: Date;
+        mtime: Date;
+        ctime: Date;
+    }
+    class $mol_file_not_found extends Error {
+    }
+    abstract class $mol_file extends $mol_object {
+        static absolute(path: string): $mol_file;
+        static relative(path: string): $mol_file;
+        static base: string;
+        path(): string;
+        parent(): $mol_file;
+        abstract stat(next?: $mol_file_stat | null, virt?: 'virt'): $mol_file_stat | null;
+        reset(): void;
+        version(): string;
+        abstract ensure(): void;
+        watcher(): {
+            destructor(): void;
+        };
+        exists(next?: boolean): boolean;
+        type(): "" | $mol_file_type;
+        name(): string;
+        ext(): string;
+        abstract buffer(next?: Uint8Array): Uint8Array;
+        text(next?: string, virt?: 'virt'): string;
+        abstract sub(): $mol_file[];
+        abstract resolve(path: string): $mol_file;
+        abstract relate(base?: $mol_file): string;
+        abstract append(next: Uint8Array | string): void;
+        find(include?: RegExp, exclude?: RegExp): $mol_file[];
+        size(): number;
+    }
+}
+
+declare namespace $ {
+    function $mol_compare_array<Value extends ArrayLike<unknown>>(a: Value, b: Value): boolean;
+}
+
+declare namespace $ {
+    class $mol_file_node extends $mol_file {
+        static absolute(path: string): $mol_file_node;
+        static relative(path: string): $mol_file_node;
+        watcher(): {
+            destructor(): void;
+        };
+        stat(next?: $mol_file_stat | null, virt?: 'virt'): $mol_file_stat | null;
+        ensure(): void;
+        buffer(next?: Uint8Array): Uint8Array;
+        sub(): $mol_file[];
+        resolve(path: string): $mol_file;
+        relate(base?: $mol_file): string;
+        append(next: Uint8Array | string): undefined;
+    }
+}
+
+declare namespace $ {
+    function $mol_wire_sync<Host extends object>(obj: Host): (Host extends (...args: infer Args) => infer Res ? Res extends Promise<infer Res2> ? (...args: Args) => Res2 : Host : {}) & { [key in keyof Host]: Host[key] extends (...args: infer Args_1) => Promise<infer Res_1> ? (...args: Args_1) => Res_1 : Host[key]; };
+}
+
+declare namespace $ {
+    let $mol_action: typeof $mol_wire_method;
+}
+
+declare namespace $ {
+    function $mol_dom_parse(text: string, type?: DOMParserSupportedType): Document;
+}
+
+declare namespace $ {
+    class $mol_fetch_response extends $mol_object2 {
+        readonly native: Response;
+        constructor(native: Response);
+        status(): "unknown" | "success" | "inform" | "redirect" | "wrong" | "failed";
+        code(): number;
+        message(): string;
+        headers(): Headers;
+        mime(): string | null;
+        stream(): ReadableStream<Uint8Array> | null;
+        text(): string;
+        json(): unknown;
+        buffer(): ArrayBuffer;
+        xml(): Document;
+        xhtml(): Document;
+        html(): Document;
+    }
+    class $mol_fetch extends $mol_object2 {
+        static request(input: RequestInfo, init?: RequestInit): Promise<Response> & {
+            destructor: () => void;
+        };
+        static response(input: RequestInfo, init?: RequestInit): $mol_fetch_response;
+        static success(input: RequestInfo, init?: RequestInit): $mol_fetch_response;
+        static stream(input: RequestInfo, init?: RequestInit): ReadableStream<Uint8Array> | null;
+        static text(input: RequestInfo, init?: RequestInit): string;
+        static json(input: RequestInfo, init?: RequestInit): unknown;
+        static buffer(input: RequestInfo, init?: RequestInit): ArrayBuffer;
+        static xml(input: RequestInfo, init?: RequestInit): Document;
+        static xhtml(input: RequestInfo, init?: RequestInit): Document;
+        static html(input: RequestInfo, init?: RequestInit): Document;
+    }
+}
+
+declare namespace $ {
+    function $mol_huggingface_run(this: $, space: string, method: string | number, ...data: readonly any[]): readonly any[];
+    function $mol_huggingface_rest(space: string, method: string, ...data: readonly any[]): readonly any[];
+    function $mol_huggingface_ws(space: string, fn_index: number, ...data: readonly any[]): Promise<readonly any[]> & {
+        destructor: () => void;
+    };
+}
+
+declare namespace $ {
+    function $hyoo_lingua_translate(this: $, lang: string, text: string): string;
+}
+
+declare namespace $ {
+    interface $mol_locale_dict {
+        [key: string]: string;
+    }
+    class $mol_locale extends $mol_object {
+        static lang_default(): string;
+        static lang(next?: string): string;
+        static source(lang: string): any;
+        static texts(lang: string, next?: $mol_locale_dict): $mol_locale_dict;
+        static text(key: string): string;
+        static warn(key: string): null;
+    }
+}
+
+declare namespace $ {
     class $mol_format extends $mol_string {
         allow(): string;
         hint(): string;
@@ -1912,41 +1988,6 @@ declare namespace $ {
     class $mol_icon_chevron_right extends $mol_icon {
         path(): string;
     }
-}
-
-declare namespace $ {
-    class $mol_list extends $mol_view {
-        render_visible_only(): boolean;
-        render_over(): number;
-        sub(): readonly $mol_view[];
-        Empty(): $mol_view;
-        Gap_before(): $mol_view;
-        Gap_after(): $mol_view;
-        view_window(): readonly any[];
-        rows(): readonly $mol_view[];
-        gap_before(): number;
-        gap_after(): number;
-    }
-}
-
-declare namespace $ {
-    function $mol_support_css_overflow_anchor(this: $): boolean;
-}
-
-declare namespace $.$$ {
-    class $mol_list extends $.$mol_list {
-        sub(): readonly $mol_view[];
-        render_visible_only(): boolean;
-        view_window(next?: [number, number]): [number, number];
-        gap_before(): number;
-        gap_after(): number;
-        sub_visible(): $mol_view[];
-        minimal_height(): number;
-        force_render(path: Set<$mol_view>): void;
-    }
-}
-
-declare namespace $ {
 }
 
 declare namespace $ {
@@ -2093,59 +2134,23 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_row extends $mol_view {
-    }
-}
-
-declare namespace $ {
-}
-
-declare namespace $ {
-    class $mol_icon_tick extends $mol_icon {
-        path(): string;
-    }
-}
-
-declare namespace $ {
-    class $mol_check_box extends $mol_check {
-        Icon(): $mol_icon_tick;
-    }
-}
-
-declare namespace $ {
-}
-
-declare namespace $ {
-    class $mol_icon_pencil extends $mol_icon {
-        path(): string;
-    }
-}
-
-declare namespace $ {
-    class $mol_icon_trash_can extends $mol_icon {
-        path(): string;
-    }
-}
-
-declare namespace $ {
-    class $mol_icon_trash_can_outline extends $mol_icon {
-        path(): string;
-    }
-}
-
-declare namespace $ {
     class $bun_tasks extends $mol_page {
+        task(id: any, next?: any): any;
+        current_task_bar_id(id: any): string;
+        current_task_bar_task_ids(id: any, next?: any): readonly string[];
+        date_type(id: any): any;
         attr(): Record<string, any>;
         title(): string;
         body(): readonly any[];
         date_selected(next?: any): $mol_time_moment;
-        Calendar(): $$.$mol_date;
-        date_selected_id(): string;
+        Calendar(): $$.$bun_tasks_calendar;
         Bar_left(): $$.$bun_tasks_bar;
         Bar_right(): $$.$bun_tasks_bar;
         Bar_row(): $mol_row;
     }
     class $bun_tasks_bar extends $mol_view {
+        ids(next?: any): readonly string[];
+        task(id: any, next?: any): any;
         sub(): readonly any[];
         input_title_value(next?: any): string;
         add_task(next?: any): any;
@@ -2199,6 +2204,20 @@ declare namespace $ {
         on_edit_enter(next?: any): any;
         Edit(): $bun_tasks_enter_input;
     }
+    class $bun_tasks_calendar extends $mol_date {
+        Icon(): any;
+        Trigger(): any;
+        Input_row(): any;
+        showed(): boolean;
+        value_moment(next?: any): $mol_time_moment;
+        date_type(id: any): any;
+        date_selected(next?: any): $mol_time_moment;
+    }
+}
+
+declare namespace $ {
+    var $bun_tasks_time_is_prev: (date: string) => boolean;
+    var $bun_tasks_time_is_next: (date: string) => boolean;
 }
 
 declare namespace $ {
@@ -2220,21 +2239,28 @@ declare namespace $ {
 }
 
 declare namespace $.$$ {
+    type $bun_tasks_date_type = 'undone' | 'done' | 'next';
     class $bun_tasks extends $.$bun_tasks {
         date_selected(next?: $mol_time_moment): $mol_time_moment;
         date_selected_id(): string;
+        task(id: string, next?: $bun_tasks_task_model | null): $bun_tasks_task_model | null;
+        task_bar_id(date: string, ord_id: number): string;
+        current_task_bar_id(ord_id: number): string;
+        task_bar_task_ids(id: string, next?: Array<string>): string[];
+        current_task_bar_task_ids(ord_id: number, next?: Array<string>): string[];
+        date_all_task_ids(id: string): string[];
+        is_date_done(id: string): boolean;
+        is_date_undone(id: string): boolean;
+        is_date_next(id: string): boolean;
+        date_type(id: string): $bun_tasks_date_type | null;
     }
     class $bun_tasks_bar extends $.$bun_tasks_bar {
-        date_id(): string;
-        ord_id(next?: number): number;
-        id(): string;
-        ids(next?: Array<string>): string[];
+        id(next?: string): string;
         ord_ids(): number[];
         new_id(): string;
-        task(id: string, next?: $bun_tasks_task_model | null): $bun_tasks_task_model | null;
-        task_title(id: string, next?: string): string;
-        task_details(id: string, next?: string): string;
-        task_done(id: string, next?: boolean): boolean;
+        task_title(id: string, next?: string): any;
+        task_details(id: string, next?: string): any;
+        task_done(id: string, next?: boolean): any;
         add_task(): void;
         toggle_task_done(id: string): void;
         drop_task(id: string): void;
@@ -2249,6 +2275,11 @@ declare namespace $.$$ {
     class $bun_tasks_editable_text extends $.$bun_tasks_editable_text {
         edit_mode(next?: boolean): boolean;
         sub(): ($mol_view | $bun_tasks_enter_input)[];
+    }
+    class $bun_tasks_calendar extends $.$bun_tasks_calendar {
+        Day_dot(id: string): $mol_view;
+        Task_calendar(): void;
+        sub(): void[];
     }
 }
 
