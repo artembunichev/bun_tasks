@@ -16,12 +16,34 @@ mol_button {
 }
 
 [ bun_tasks_calendar ] [ mol_theme="$mol_theme_current" ] {
-	background-color: #41dcea70;
+	background-color: #41dcea5e;
 }
 
 [ mol_calendar_day ] {
+	position: relative;
 	border-radius: 0;
 	border: 0.1px solid #000000;
+}
+
+[ bun_tasks_calendar_day_dot ] {
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 5.5px;
+	height: 5.5px;
+	border-radius: 50%;
+}
+
+[ dot_type = 'next' ] {
+	background-color: #eada00;
+}
+
+[ dot_type = 'done' ] {
+	background-color: #00ea10;
+}
+
+[ dot_type = 'undone' ] {
+	background-color: #ea0000;
 }
 
 [ bun_tasks_bar_row ] {

@@ -1,5 +1,7 @@
 namespace $.$$ {
 
+	export type $bun_tasks_date_type = 'undone' | 'done' | 'next'
+
 	export class $bun_tasks extends $.$bun_tasks {
 
 		@ $mol_mem
@@ -9,40 +11,11 @@ namespace $.$$ {
 
 		@ $mol_mem
 		date_selected_id() {
-			var { year, month, day } = this.date_selected()
-			return `${ year }-${ month }-${ day }`
-		}
+			var date = this.date_selected()
 
-	}
+			var date_id = date.toString( "YYYY-MM-DD" )
 
-	export class $bun_tasks_bar extends $.$bun_tasks_bar {
-
-		date_id() {
-			return ``
-		}
-
-		@ $mol_mem
-		ord_id( next?: number ) {
-			return next ?? 0
-		}
-
-		@ $mol_mem
-		id() {
-			return `${ this.date_id() }-${ this.ord_id() }`
-		}
-
-		@ $mol_mem
-		ids( next?: Array< string > ){
-			return $mol_state_local.value( `task-ids-${ this.id() }`, next ) ?? []
-		}
-
-		@ $mol_mem
-		ord_ids() {
-			return this.ids().map( id => Number( id.split( '-' ).at( -1 ) ) )
-		}
-
-		new_id() {
-			return `${ this.id() }-${ Math.max( 0, ...this.ord_ids() ) + 1 }`
+			return date_id
 		}
 
 		@ $mol_mem_key
@@ -66,6 +39,131 @@ namespace $.$$ {
 			}
 
 			return next
+		}
+
+		task_bar_id( date: string, ord_id: number ) {
+			return `${ date }-${ ord_id }`
+		}
+
+		@ $mol_mem_key
+		current_task_bar_id( ord_id: number ) {
+			return this.task_bar_id( this.date_selected_id(), ord_id )
+		}
+
+		@ $mol_mem_key
+		task_bar_task_ids( id: string, next?: Array< string > ) {
+			return $mol_state_local.value( `task-ids-${ id }`, next ) ?? []
+		}
+
+		@ $mol_mem_key
+		current_task_bar_task_ids( ord_id: number, next?: Array< string > ) {
+			return this.task_bar_task_ids( this.current_task_bar_id( ord_id ), next )
+		}
+
+		@ $mol_mem_key
+		date_all_task_ids( id: string ) {
+			return [
+				...this.task_bar_task_ids( this.task_bar_id( id, 1 ) ),
+				...this.task_bar_task_ids( this.task_bar_id( id, 2 ) )
+			]
+		}
+
+		@ $mol_mem_key
+		is_date_done( id: string ) {
+			var is_prev_day = $bun_tasks_time_is_prev( id )
+
+			if ( !is_prev_day ) {
+				return false
+			}
+
+			var task_ids = this.date_all_task_ids( id )
+
+			if ( !task_ids.length ) {
+				return false
+			}
+
+			return task_ids.every( task_id => {
+				var task = this.task( task_id )
+
+				return task?.done() === true
+			} )
+		}
+
+		@ $mol_mem_key
+		is_date_undone( id: string ) {
+			var is_prev_day = $bun_tasks_time_is_prev( id )
+
+			if ( !is_prev_day ) {
+				return false
+			}
+
+			var task_ids = this.date_all_task_ids( id )
+
+			if ( !task_ids.length ) {
+				return false
+			}
+
+			return task_ids.some( task_id => {
+				var task = this.task( task_id )
+
+				return task?.done() === false
+			} )
+		}
+
+		@ $mol_mem_key
+		is_date_next( id: string ) {
+			var is_next_day = $bun_tasks_time_is_next( id )
+
+			if ( !is_next_day ) {
+				return false
+			}
+
+			var task_ids = this.date_all_task_ids( id )
+
+			if ( !task_ids.length ) {
+				return false
+			}
+
+			return task_ids.some( task_id => {
+				var task = this.task( task_id )
+
+				return task?.done() === false
+			} )
+		}
+
+		@ $mol_mem_key
+		date_type( id: string ): $bun_tasks_date_type | null {
+			if ( this.is_date_done( id ) ) {
+				return 'done'
+			}
+
+			else if ( this.is_date_undone( id ) ) {
+				return 'undone'
+			}
+
+			else if ( this.is_date_next( id ) ) {
+				return 'next'
+			}
+
+			return null
+		}
+
+	}
+
+	export class $bun_tasks_bar extends $.$bun_tasks_bar {
+
+		@ $mol_mem
+		id( next?: string ) {
+			return next ?? '0-0'
+		}
+
+		@ $mol_mem
+		ord_ids() {
+			return this.ids().map( id => Number( id.split( '-' ).at( -1 ) ) )
+		}
+
+		new_id() {
+			return `${ this.id() }-${ Math.max( 0, ...this.ord_ids() ) + 1 }`
 		}
 
 		@ $mol_mem_key
@@ -111,7 +209,7 @@ namespace $.$$ {
 		}
 
 		tasks_sorted() {
-			return this.ids().sort( ( a, b )=> {
+			return this.ids().slice().sort( ( a, b )=> {
 				return Number( this.task_done( a ) ) - Number( this.task_done( b ) )
 			} )
 		}
@@ -150,6 +248,36 @@ namespace $.$$ {
 		sub() {
 			return [
 				this.edit_mode() ? this.Edit() : this.Non_edit()
+			]
+		}
+
+	}
+
+	export class $bun_tasks_calendar extends $.$bun_tasks_calendar {
+
+		@ $mol_mem_key
+		Day_dot( id: string ) {
+			var obj = new this.$.$mol_view()
+
+			obj.attr = ()=> ( {
+				'dot_type': this.date_type( id )
+			} )
+
+			return obj
+		}
+
+		Task_calendar() {
+			var obj  = this.Calendar()
+
+			obj.day_content = ( id: string )=> [
+				obj.Day_button( id ),
+				... this.date_type( id ) !== null ? [ this.Day_dot( id ) ] : []
+			]
+		}
+
+		sub() {
+			return [
+				this.Task_calendar()
 			]
 		}
 

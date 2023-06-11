@@ -1,4 +1,8 @@
 $bun_tasks $mol_page
+	task*? null
+	current_task_bar_id* \0-0
+	current_task_bar_task_ids*? /string
+	date_type* null
 	attr *
 		^
 		mol_theme \$mol_theme_light
@@ -7,15 +11,20 @@ $bun_tasks $mol_page
 		<= Bar_row $mol_row
 			sub /
 				<= Calendar $bun_tasks_calendar
+					date_type* <= date_type*
 					date_selected? <=> date_selected? $mol_time_moment
 				<= Bar_left $bun_tasks_bar
-					ord_id 1
-					date_id <= date_selected_id \
+					id <= current_task_bar_id*1
+					ids? <=> current_task_bar_task_ids*1?
+					task*? <=> task*?
 				<= Bar_right $bun_tasks_bar
-					ord_id 2
-					date_id <= date_selected_id \
+					id <= current_task_bar_id*2
+					ids? <=> current_task_bar_task_ids*2?
+					task*? <=> task*?
 
 $bun_tasks_bar $mol_view
+	ids? /string
+	task*? null
 	sub /
 		<= Input_row $mol_row
 			sub /
@@ -91,3 +100,4 @@ $bun_tasks_calendar $mol_date
 	Input_row null
 	showed true
 	value_moment? <=> date_selected? $mol_time_moment
+	date_type* null
