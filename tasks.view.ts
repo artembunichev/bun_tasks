@@ -166,6 +166,19 @@ namespace $.$$ {
 			return `${ this.id() }-${ Math.max( 0, ...this.ord_ids() ) + 1 }`
 		}
 
+		sort_task_ids() {
+			this.ids(
+				this.ids().slice().sort( ( a, b )=> {
+					return Number( this.task_done( a ) ) - Number( this.task_done( b ) )
+				} )
+			)
+		}
+
+		@ $mol_mem_key
+		task_index( id: string ) {
+			return this.ids().findIndex( id2 => id === id2 )
+		}
+
 		@ $mol_mem_key
 		task_title( id: string, next?: string ) {
 			return this.task( id )?.title( next ) ?? ''
@@ -195,12 +208,15 @@ namespace $.$$ {
 
 			this.ids( [ ...this.ids(), new_id ] )
 
+			this.sort_task_ids()
+
 			this.input_title_value( '' )
 			this.input_details_value( '' )
 		}
 
 		toggle_task_done( id: string ) {
 			this.task_done( id, !this.task_done( id ) )
+			this.sort_task_ids()
 		}
 
 		drop_task( id: string ) {
@@ -208,14 +224,28 @@ namespace $.$$ {
 			this.ids( this.ids().filter( id2 => id2 !== id ) )
 		}
 
-		tasks_sorted() {
-			return this.ids().slice().sort( ( a, b )=> {
-				return Number( this.task_done( a ) ) - Number( this.task_done( b ) )
-			} )
+		move_task_up( id: string ) {
+			this.ids( $bun_array_move_up( this.ids(), this.task_index( id ) ) )
+		}
+
+		move_task_down( id: string ) {
+			this.ids( $bun_array_move_down( this.ids() , this.task_index( id ) ) )
+		}
+
+		move_task_top( id: string ) {
+			this.ids( $bun_array_move_top( this.ids(), this.task_index( id ) ) )
+		}
+
+		move_task_bottom( id: string ) {
+			var { before: undone_ids, after: done_ids } = $bun_array_divide( this.ids(), ( id )=> this.task_done( id ) )
+
+			var new_undone_ids = $bun_array_move_bottom( undone_ids, this.task_index( id ) )
+
+			this.ids( [ ...new_undone_ids, ...done_ids ] )
 		}
 
 		tasks() {
-			return this.tasks_sorted().map( id => this.Task( id ) )
+			return this.ids().map( id => this.Task( id ) )
 		}
 
 	}
