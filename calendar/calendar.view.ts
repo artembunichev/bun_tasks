@@ -29,6 +29,7 @@ namespace $.$$ {
 			}
 		}
 
+		@ $mol_mem
 		sub() {
 			return [
 				this.Task_calendar()

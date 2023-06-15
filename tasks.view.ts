@@ -12,7 +12,6 @@ namespace $.$$ {
 	>
 
 	export class $bun_tasks extends $.$bun_tasks {
-
 		@ $mol_mem
 		date_selected( next?: $mol_time_moment ): $mol_time_moment {
 			return next ?? new $mol_time_moment()
@@ -193,6 +192,7 @@ namespace $.$$ {
 			return next ?? false
 		}
 
+		@ $mol_mem
 		sub() {
 			return [
 				this.edit_mode() ? this.Edit() : this.Non_edit()
