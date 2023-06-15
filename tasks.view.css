@@ -51,6 +51,11 @@ mol_button {
 	display: flex;
 }
 
+[ current_date ] {
+	text-decoration: underline;
+	font-weight: bold;
+}
+
 [ bun_tasks_bar ] {
 	flex: 1 0 0;
 	display: flex;

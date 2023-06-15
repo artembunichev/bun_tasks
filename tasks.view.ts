@@ -326,10 +326,17 @@ namespace $.$$ {
 		Task_calendar() {
 			var obj  = this.Calendar()
 
-			obj.day_content = ( id: string )=> [
-				obj.Day_button( id ),
-				... this.date_type( id ) !== null ? [ this.Day_dot( id ) ] : []
-			]
+			obj.day_content = ( id: string )=> {
+				var Day_button = obj.Day_button( id )
+				Day_button.attr = ()=> ( {
+					'current_date': $bun_tasks_time_is_today( id )
+				} )
+
+				return [
+					Day_button,
+					... this.date_type( id ) !== null ? [ this.Day_dot( id ) ] : [],
+				]
+			}
 		}
 
 		sub() {
