@@ -1,0 +1,7 @@
+$bun_tasks_calendar $mol_date
+	Icon null
+	Trigger null
+	Input_row null
+	showed true
+	value_moment? <=> date_selected? $mol_time_moment
+	date_type* null

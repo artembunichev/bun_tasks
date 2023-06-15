@@ -1,114 +1,3 @@
-$bun_tasks_enter_input $mol_string
-	plugins /
-		<= Add_task_hotkey $mol_hotkey
-			key * enter? <=> on_enter? null
-
-$bun_tasks_editable_text $mol_view
-	sub /
-		<= Non_edit $mol_view
-			sub / <= value
-		<= Edit $bun_tasks_enter_input
-			value?next <=> value?next null
-			on_enter? <=> on_edit_enter? null
-
-$bun_tasks_calendar $mol_date
-	Icon null
-	Trigger null
-	Input_row null
-	showed true
-	value_moment? <=> date_selected? $mol_time_moment
-	date_type* null
-
-$bun_tasks_task_item_options $mol_view
-	sub /
-		<= List $mol_list
-			rows /
-				<= Top_button $mol_button_minor
-					sub / <= Top_button_icon $mol_icon_arrow_collapse_up
-					click? <=> move_top? null
-				<= Up_button $mol_button_minor
-					sub / <= Up_icon $mol_icon_arrow_up
-					click? <=> move_up? null
-				<= Down_button $mol_button_minor
-					sub / <= Down_icon $mol_icon_arrow_down
-					click? <=> move_down? null
-				<= Bottom_button $mol_button_minor
-					sub / <= Bottom_icon $mol_icon_arrow_collapse_down
-					click? <=> move_bottom? null
-
-$bun_tasks_task_item $mol_view
-	edit_mode false
-	attr *
-		^
-		done <= done
-	sub /
-		<= Content $mol_row
-			sub /
-				<= Left_side $mol_view
-					sub /
-						<= Tools $mol_list
-							sub /
-								<= Checkbox $mol_check_box
-									checked?next <=> done?next null
-									click? <=> toggle_done? null
-								<= Edit_button $mol_button_minor
-									click? <=> toggle_edit_mode? null
-									sub / <= Edit_icon $mol_icon_pencil
-						<= Text_content $mol_list
-							sub /
-								<= Title $bun_tasks_editable_text
-									edit_mode <= edit_mode
-									value? <=> title? \
-									on_edit_enter? <=> quit_edit_mode? null
-								<= Details $bun_tasks_editable_text
-									edit_mode <= edit_mode
-									value? <=> details? \
-									on_edit_enter? <=> quit_edit_mode? null
-				<= Right_side $mol_view
-					sub /
-						<= Extra_tools $mol_view
-							sub /
-								<= Drop_task_button $mol_button_minor
-									sub / <= Drop_task_icon $mol_icon_trash_can_outline
-									click? <=> drop? null
-								<= Popover $mol_pick
-									align \right_bottom
-									trigger_content / <= Dots_icon $mol_icon_dots_horizontal
-									bubble_content /
-										<= Options $bun_tasks_task_item_options
-											move_top? <=> move_top? null
-											move_up? <=> move_up? null
-											move_down? <=> move_down? null
-											move_bottom? <=> move_bottom? null
-$bun_tasks_bar $mol_view
-	ord \0
-	date_id \2023-01-01
-	task_ids? /string
-	task*? null
-	sub /
-		<= Input_row $mol_row
-			sub /
-				<= Input_title $bun_tasks_enter_input
-					hint \Заголовок
-					value? <=> input_title_value? \
-					on_enter? <=> add_task? null
-				<= Input_details $bun_tasks_enter_input
-					hint \Детали
-					value? <=> input_details_value? \
-					on_enter? <=> add_task?
-		<= List $mol_list
-			rows <= tasks /$mol_view
-				<= Task*0 $bun_tasks_task_item
-					title? <=> task_title*? \
-					details? <=> task_details*? \
-					done <= task_done* false
-					toggle_done? <=> toggle_task_done*? null
-					drop? <=> drop_task*? null
-					move_top? <=> move_task_top*? null
-					move_up? <=> move_task_up*? null
-					move_down? <=> move_task_down*? null
-					move_bottom? <=> move_task_bottom*? null
-
 $bun_tasks $mol_page
 	title \Спиок дел
 	task*? null
@@ -134,3 +23,16 @@ $bun_tasks $mol_page
 					date_id <= date_selected_id
 					task_ids? <=> task_ids_date_current_bar*2?
 					task*? <=> task*?
+
+$bun_tasks_enter_input $mol_string
+	plugins /
+		<= Add_task_hotkey $mol_hotkey
+			key * enter? <=> on_enter? null
+
+$bun_tasks_editable_text $mol_view
+	sub /
+		<= Non_edit $mol_view
+			sub / <= value
+		<= Edit $bun_tasks_enter_input
+			value?next <=> value?next null
+			on_enter? <=> on_edit_enter? null

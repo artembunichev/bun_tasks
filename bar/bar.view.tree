@@ -1,0 +1,28 @@
+$bun_tasks_bar $mol_view
+	ord \0
+	date_id \2023-01-01
+	task_ids? /string
+	task*? null
+	sub /
+		<= Input_row $mol_row
+			sub /
+				<= Input_title $bun_tasks_enter_input
+					hint \Заголовок
+					value? <=> input_title_value? \
+					on_enter? <=> add_task? null
+				<= Input_details $bun_tasks_enter_input
+					hint \Детали
+					value? <=> input_details_value? \
+					on_enter? <=> add_task?
+		<= List $mol_list
+			rows <= tasks /$mol_view
+				<= Task*0 $bun_tasks_task_item
+					title? <=> task_title*? \
+					details? <=> task_details*? \
+					done <= task_done* false
+					toggle_done? <=> toggle_task_done*? null
+					drop? <=> drop_task*? null
+					move_top? <=> move_task_top*? null
+					move_up? <=> move_task_up*? null
+					move_down? <=> move_task_down*? null
+					move_bottom? <=> move_task_bottom*? null
