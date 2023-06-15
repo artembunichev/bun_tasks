@@ -6,6 +6,7 @@ namespace $.$$ {
 			return $mol_guid( 6 )
 		}
 
+		@ $mol_action
 		sort_task_ids() {
 			this.task_ids(
 				this.task_ids().slice().sort( ( a, b )=> {
@@ -34,6 +35,7 @@ namespace $.$$ {
 			return this.task( id )?.done( next ) ?? false
 		}
 
+		@ $mol_action
 		add_task() {
 			if ( !this.input_title_value() && !this.input_details_value() ) {
 				return
@@ -54,28 +56,34 @@ namespace $.$$ {
 			this.input_details_value( '' )
 		}
 
+		@ $mol_action
 		toggle_task_done( id: string ) {
 			this.task_done( id, !this.task_done( id ) )
 			this.sort_task_ids()
 		}
 
+		@ $mol_action
 		drop_task( id: string ) {
 			this.task( id, null )
 			this.task_ids( this.task_ids().filter( id2 => id2 !== id ) )
 		}
 
+		@ $mol_action
 		move_task_up( id: string ) {
 			this.task_ids( $bun_array_move_up( this.task_ids(), this.task_index( id ) ) )
 		}
 
+		@ $mol_action
 		move_task_down( id: string ) {
 			this.task_ids( $bun_array_move_down( this.task_ids(), this.task_index( id ) ) )
 		}
 
+		@ $mol_action
 		move_task_top( id: string ) {
 			this.task_ids( $bun_array_move_top( this.task_ids(), this.task_index( id ) ) )
 		}
 
+		@ $mol_action
 		move_task_bottom( id: string ) {
 			var { before: undone_ids, after: done_ids } = $bun_array_divide( this.task_ids(), ( id )=> this.task_done( id ) )
 
