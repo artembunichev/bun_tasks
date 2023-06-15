@@ -81,7 +81,9 @@ $bun_tasks_task_item $mol_view
 											move_down? <=> move_down? null
 											move_bottom? <=> move_bottom? null
 $bun_tasks_bar $mol_view
-	ids? /string
+	ord \0
+	date_id \2023-01-01
+	task_ids? /string
 	task*? null
 	sub /
 		<= Input_row $mol_row
@@ -108,14 +110,14 @@ $bun_tasks_bar $mol_view
 					move_bottom? <=> move_task_bottom*? null
 
 $bun_tasks $mol_page
+	title \Спиок дел
 	task*? null
-	current_task_bar_id* \0-0
-	current_task_bar_task_ids*? /string
+	date_selected_id \
+	task_ids_date_current_bar*? null
 	date_type* null
 	attr *
 		^
 		mol_theme \$mol_theme_light
-	title \Спиок дел
 	body /
 		<= Bar_row $mol_row
 			sub /
@@ -123,10 +125,12 @@ $bun_tasks $mol_page
 					date_type* <= date_type*
 					date_selected? <=> date_selected? $mol_time_moment
 				<= Bar_left $bun_tasks_bar
-					id <= current_task_bar_id*1
-					ids? <=> current_task_bar_task_ids*1?
+					ord \1
+					date_id <= date_selected_id
+					task_ids? <=> task_ids_date_current_bar*1?
 					task*? <=> task*?
 				<= Bar_right $bun_tasks_bar
-					id <= current_task_bar_id*2
-					ids? <=> current_task_bar_task_ids*2?
+					ord \2
+					date_id <= date_selected_id
+					task_ids? <=> task_ids_date_current_bar*2?
 					task*? <=> task*?

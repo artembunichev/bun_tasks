@@ -2,6 +2,15 @@ namespace $.$$ {
 
 	export type $bun_tasks_date_type = 'undone' | 'done' | 'next'
 
+	type Data_date_bar = Array< string >
+
+	type Data_date = Record< string, Data_date_bar >
+
+	type Data = Record<
+		string,
+		Data_date
+	>
+
 	export class $bun_tasks extends $.$bun_tasks {
 
 		@ $mol_mem
@@ -16,6 +25,60 @@ namespace $.$$ {
 			var date_id = date.toString( "YYYY-MM-DD" )
 
 			return date_id
+		}
+
+		@ $mol_mem
+		data( next?: Data ): Data {
+			if ( next !== undefined ) {
+				Object.entries( next ).forEach( ( [ date, bars ] ) => {
+					if ( Object.values( bars ).every( ids => ids.length === 0 ) ) {
+						delete next[ date ]
+					}
+				} )
+			}
+
+			return $mol_state_local.value( 'data', next ) ?? {}
+		}
+
+		@ $mol_mem_key
+		data_dates( date_id: string, next?: Data_date ) {
+			if ( next !== undefined ) {
+				this.data(
+					{
+						... this.data(),
+						[ date_id ]: next,
+					}
+				)
+			}
+
+			return this.data()[ date_id ] ?? { '1': [], '2': [] }
+		}
+
+		@ $mol_mem_key
+		task_ids_date_bar( { 0: date_id, 1: bar } : [ string, string ], next?: Data_date_bar ) {
+			if ( next !== undefined ) {
+				this.data_dates(
+					date_id,
+					{
+						... this.data_dates( date_id ),
+						[ bar ]: next,
+					},
+				)
+			}
+			return this.data_dates( date_id )[ bar ]
+		}
+
+		@ $mol_mem_key
+		task_ids_date_current_bar( bar: string, next?: Data_date_bar ) {
+			return this.task_ids_date_bar( [ this.date_selected_id(), bar ], next )
+		}
+
+		@ $mol_mem_key
+		task_ids_date( date_id: string ) {
+			return Object.values( this.data_dates( date_id ) ).reduce( ( acc, ids )=> {
+				acc.push( ... ids )
+				return acc
+			}, [] )
 		}
 
 		@ $mol_mem_key
@@ -41,42 +104,15 @@ namespace $.$$ {
 			return next
 		}
 
-		task_bar_id( date: string, ord_id: number ) {
-			return `${ date }-${ ord_id }`
-		}
-
 		@ $mol_mem_key
-		current_task_bar_id( ord_id: number ) {
-			return this.task_bar_id( this.date_selected_id(), ord_id )
-		}
-
-		@ $mol_mem_key
-		task_bar_task_ids( id: string, next?: Array< string > ) {
-			return $mol_state_local.value( `task-ids-${ id }`, next ) ?? []
-		}
-
-		@ $mol_mem_key
-		current_task_bar_task_ids( ord_id: number, next?: Array< string > ) {
-			return this.task_bar_task_ids( this.current_task_bar_id( ord_id ), next )
-		}
-
-		@ $mol_mem_key
-		date_all_task_ids( id: string ) {
-			return [
-				...this.task_bar_task_ids( this.task_bar_id( id, 1 ) ),
-				...this.task_bar_task_ids( this.task_bar_id( id, 2 ) )
-			]
-		}
-
-		@ $mol_mem_key
-		is_date_done( id: string ) {
-			var is_prev_day = $bun_tasks_time_is_prev( id )
+		is_date_done( date_id: string ) {
+			var is_prev_day = $bun_tasks_time_is_prev( date_id )
 
 			if ( !is_prev_day ) {
 				return false
 			}
 
-			var task_ids = this.date_all_task_ids( id )
+			var task_ids = this.task_ids_date( date_id )
 
 			if ( !task_ids.length ) {
 				return false
@@ -90,14 +126,14 @@ namespace $.$$ {
 		}
 
 		@ $mol_mem_key
-		is_date_undone( id: string ) {
-			var is_prev_day = $bun_tasks_time_is_prev( id )
+		is_date_undone( date_id: string ) {
+			var is_prev_day = $bun_tasks_time_is_prev( date_id )
 
 			if ( !is_prev_day ) {
 				return false
 			}
 
-			var task_ids = this.date_all_task_ids( id )
+			var task_ids = this.task_ids_date( date_id )
 
 			if ( !task_ids.length ) {
 				return false
@@ -111,14 +147,14 @@ namespace $.$$ {
 		}
 
 		@ $mol_mem_key
-		is_date_next( id: string ) {
-			var is_next_day = $bun_tasks_time_is_next( id )
+		is_date_next( date_id: string ) {
+			var is_next_day = $bun_tasks_time_is_next( date_id )
 
 			if ( !is_next_day ) {
 				return false
 			}
 
-			var task_ids = this.date_all_task_ids( id )
+			var task_ids = this.task_ids_date( date_id )
 
 			if ( !task_ids.length ) {
 				return false
@@ -132,16 +168,16 @@ namespace $.$$ {
 		}
 
 		@ $mol_mem_key
-		date_type( id: string ): $bun_tasks_date_type | null {
-			if ( this.is_date_done( id ) ) {
+		date_type( date_id: string ): $bun_tasks_date_type | null {
+			if ( this.is_date_done( date_id ) ) {
 				return 'done'
 			}
 
-			else if ( this.is_date_undone( id ) ) {
+			else if ( this.is_date_undone( date_id ) ) {
 				return 'undone'
 			}
 
-			else if ( this.is_date_next( id ) ) {
+			else if ( this.is_date_next( date_id ) ) {
 				return 'next'
 			}
 
@@ -152,23 +188,13 @@ namespace $.$$ {
 
 	export class $bun_tasks_bar extends $.$bun_tasks_bar {
 
-		@ $mol_mem
-		id( next?: string ) {
-			return next ?? '0-0'
-		}
-
-		@ $mol_mem
-		ord_ids() {
-			return this.ids().map( id => Number( id.split( '-' ).at( -1 ) ) )
-		}
-
-		new_id() {
-			return `${ this.id() }-${ Math.max( 0, ...this.ord_ids() ) + 1 }`
+		new_task_id() {
+			return $mol_guid( 6 )
 		}
 
 		sort_task_ids() {
-			this.ids(
-				this.ids().slice().sort( ( a, b )=> {
+			this.task_ids(
+				this.task_ids().slice().sort( ( a, b )=> {
 					return Number( this.task_done( a ) ) - Number( this.task_done( b ) )
 				} )
 			)
@@ -176,7 +202,7 @@ namespace $.$$ {
 
 		@ $mol_mem_key
 		task_index( id: string ) {
-			return this.ids().findIndex( id2 => id === id2 )
+			return this.task_ids().findIndex( id2 => id === id2 )
 		}
 
 		@ $mol_mem_key
@@ -199,14 +225,14 @@ namespace $.$$ {
 				return
 			}
 
-			const new_id = this.new_id()
-			var new_task = new $bun_tasks_task_model( new_id )
+			const new_task_id = this.new_task_id()
+			var new_task = new $bun_tasks_task_model( new_task_id )
 			new_task.title( this.input_title_value() )
 			new_task.details( this.input_details_value() )
 
-			this.task( new_id, new_task )
+			this.task( new_task_id, new_task )
 
-			this.ids( [ ...this.ids(), new_id ] )
+			this.task_ids( [ ... this.task_ids(), new_task_id ] )
 
 			this.sort_task_ids()
 
@@ -221,31 +247,32 @@ namespace $.$$ {
 
 		drop_task( id: string ) {
 			this.task( id, null )
-			this.ids( this.ids().filter( id2 => id2 !== id ) )
+			this.task_ids( this.task_ids().filter( id2 => id2 !== id ) )
 		}
 
 		move_task_up( id: string ) {
-			this.ids( $bun_array_move_up( this.ids(), this.task_index( id ) ) )
+			this.task_ids( $bun_array_move_up( this.task_ids(), this.task_index( id ) ) )
 		}
 
 		move_task_down( id: string ) {
-			this.ids( $bun_array_move_down( this.ids() , this.task_index( id ) ) )
+			this.task_ids( $bun_array_move_down( this.task_ids(), this.task_index( id ) ) )
 		}
 
 		move_task_top( id: string ) {
-			this.ids( $bun_array_move_top( this.ids(), this.task_index( id ) ) )
+			this.task_ids( $bun_array_move_top( this.task_ids(), this.task_index( id ) ) )
 		}
 
 		move_task_bottom( id: string ) {
-			var { before: undone_ids, after: done_ids } = $bun_array_divide( this.ids(), ( id )=> this.task_done( id ) )
+			var { before: undone_ids, after: done_ids } = $bun_array_divide( this.task_ids(), ( id )=> this.task_done( id ) )
 
 			var new_undone_ids = $bun_array_move_bottom( undone_ids, this.task_index( id ) )
 
-			this.ids( [ ...new_undone_ids, ...done_ids ] )
+			this.task_ids( [ ...new_undone_ids, ...done_ids ] )
 		}
 
+		@ $mol_mem
 		tasks() {
-			return this.ids().map( id => this.Task( id ) )
+			return this.task_ids().map( id => this.Task( id ) )
 		}
 
 	}
