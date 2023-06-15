@@ -7294,6 +7294,91 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    class $mol_store extends $mol_object2 {
+        data_default;
+        constructor(data_default) {
+            super();
+            this.data_default = data_default;
+        }
+        data(next) {
+            return next === undefined ? this.data_default : next;
+        }
+        snapshot(next) {
+            return JSON.stringify(this.data(next === undefined ? next : JSON.parse(next)));
+        }
+        value(key, next) {
+            const data = this.data();
+            if (next === undefined)
+                return data && data[key];
+            const Constr = Reflect.getPrototypeOf(data).constructor;
+            this.data(Object.assign(new Constr, data, { [key]: next }));
+            return next;
+        }
+        selection(key, next = [0, 0]) {
+            return next;
+        }
+        sub(key, lens) {
+            if (!lens)
+                lens = new $mol_store();
+            const data = lens.data;
+            lens.data = next => {
+                if (next == undefined) {
+                    return this.value(key) ?? lens.data_default;
+                }
+                return this.value(key, next);
+            };
+            return lens;
+        }
+        reset() {
+            this.data(this.data_default);
+        }
+        active() {
+            return true;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_store.prototype, "data", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_store.prototype, "selection", null);
+    $.$mol_store = $mol_store;
+})($ || ($ = {}));
+//mol/store/store.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $bun_tasks_task_model extends $mol_store {
+        id;
+        constructor(id) {
+            super();
+            this.id = id;
+        }
+        data_default = { title: '', details: '', done: false };
+        data(data) {
+            return $mol_state_local.value(`task-${this.id}`, data) ?? this.data_default;
+        }
+        title(next) {
+            return this.value('title', next);
+        }
+        details(next) {
+            return this.value('details', next);
+        }
+        done(next) {
+            return this.value('done', next);
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $bun_tasks_task_model.prototype, "data", null);
+    $.$bun_tasks_task_model = $bun_tasks_task_model;
+})($ || ($ = {}));
+//bun/tasks/task/model.ts
+;
+"use strict";
+var $;
+(function ($) {
     class $mol_icon_tick extends $mol_icon {
         path() {
             return "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z";
@@ -7841,94 +7926,6 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $mol_store extends $mol_object2 {
-        data_default;
-        constructor(data_default) {
-            super();
-            this.data_default = data_default;
-        }
-        data(next) {
-            return next === undefined ? this.data_default : next;
-        }
-        snapshot(next) {
-            return JSON.stringify(this.data(next === undefined ? next : JSON.parse(next)));
-        }
-        value(key, next) {
-            const data = this.data();
-            if (next === undefined)
-                return data && data[key];
-            const Constr = Reflect.getPrototypeOf(data).constructor;
-            this.data(Object.assign(new Constr, data, { [key]: next }));
-            return next;
-        }
-        selection(key, next = [0, 0]) {
-            return next;
-        }
-        sub(key, lens) {
-            if (!lens)
-                lens = new $mol_store();
-            const data = lens.data;
-            lens.data = next => {
-                if (next == undefined) {
-                    return this.value(key) ?? lens.data_default;
-                }
-                return this.value(key, next);
-            };
-            return lens;
-        }
-        reset() {
-            this.data(this.data_default);
-        }
-        active() {
-            return true;
-        }
-    }
-    __decorate([
-        $mol_mem
-    ], $mol_store.prototype, "data", null);
-    __decorate([
-        $mol_mem_key
-    ], $mol_store.prototype, "selection", null);
-    $.$mol_store = $mol_store;
-})($ || ($ = {}));
-//mol/store/store.ts
-;
-"use strict";
-//bun/tasks/task/-view.tree/item.view.tree.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $bun_tasks_task_model extends $mol_store {
-        id;
-        constructor(id) {
-            super();
-            this.id = id;
-        }
-        data_default = { title: '', details: '', done: false };
-        data(data) {
-            return $mol_state_local.value(`task-${this.id}`, data) ?? this.data_default;
-        }
-        title(next) {
-            return this.value('title', next);
-        }
-        details(next) {
-            return this.value('details', next);
-        }
-        done(next) {
-            return this.value('done', next);
-        }
-    }
-    __decorate([
-        $mol_mem
-    ], $bun_tasks_task_model.prototype, "data", null);
-    $.$bun_tasks_task_model = $bun_tasks_task_model;
-})($ || ($ = {}));
-//bun/tasks/task/model.ts
-;
-"use strict";
-var $;
-(function ($) {
     var $$;
     (function ($$) {
         class $bun_tasks_task_item extends $.$bun_tasks_task_item {
@@ -7945,10 +7942,16 @@ var $;
         __decorate([
             $mol_mem
         ], $bun_tasks_task_item.prototype, "edit_mode", null);
+        __decorate([
+            $mol_action
+        ], $bun_tasks_task_item.prototype, "toggle_edit_mode", null);
+        __decorate([
+            $mol_action
+        ], $bun_tasks_task_item.prototype, "quit_edit_mode", null);
         $$.$bun_tasks_task_item = $bun_tasks_task_item;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-//bun/tasks/task/item.view.ts
+//bun/tasks/task/item/item.view.ts
 ;
 "use strict";
 var $;

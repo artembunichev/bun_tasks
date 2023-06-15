@@ -1976,6 +1976,38 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    class $mol_store<Data> extends $mol_object2 {
+        data_default?: Data | undefined;
+        constructor(data_default?: Data | undefined);
+        data(next?: Data): NonNullable<Data> | (Data & null);
+        snapshot(next?: string): string;
+        value<Key extends keyof Data>(key: Key, next?: Data[Key]): Data[Key] & {};
+        selection<Key extends keyof Data>(key: Key, next?: number[]): number[];
+        sub<Key extends keyof Data, Lens extends $mol_store<Data[Key]> = $mol_store<NonNullable<Data[Key]>>>(key: Key, lens?: Lens): Lens;
+        reset(): void;
+        active(): boolean;
+    }
+}
+
+declare namespace $ {
+    type Task_data = {
+        title: string;
+        details: string;
+        done: boolean;
+    };
+    export class $bun_tasks_task_model extends $mol_store<Task_data> {
+        readonly id: string;
+        constructor(id: string);
+        data_default: Task_data;
+        data(data?: Task_data): Task_data;
+        title(next?: string): string;
+        details(next?: string): string;
+        done(next?: boolean): boolean;
+    }
+    export {};
+}
+
+declare namespace $ {
     class $mol_icon_tick extends $mol_icon {
         path(): string;
     }
@@ -2096,38 +2128,6 @@ declare namespace $ {
         Right_side(): $mol_view;
         Content(): $mol_row;
     }
-}
-
-declare namespace $ {
-    class $mol_store<Data> extends $mol_object2 {
-        data_default?: Data | undefined;
-        constructor(data_default?: Data | undefined);
-        data(next?: Data): NonNullable<Data> | (Data & null);
-        snapshot(next?: string): string;
-        value<Key extends keyof Data>(key: Key, next?: Data[Key]): Data[Key] & {};
-        selection<Key extends keyof Data>(key: Key, next?: number[]): number[];
-        sub<Key extends keyof Data, Lens extends $mol_store<Data[Key]> = $mol_store<NonNullable<Data[Key]>>>(key: Key, lens?: Lens): Lens;
-        reset(): void;
-        active(): boolean;
-    }
-}
-
-declare namespace $ {
-    type Task_data = {
-        title: string;
-        details: string;
-        done: boolean;
-    };
-    export class $bun_tasks_task_model extends $mol_store<Task_data> {
-        readonly id: string;
-        constructor(id: string);
-        data_default: Task_data;
-        data(data?: Task_data): Task_data;
-        title(next?: string): string;
-        details(next?: string): string;
-        done(next?: boolean): boolean;
-    }
-    export {};
 }
 
 declare namespace $.$$ {
