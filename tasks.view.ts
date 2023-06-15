@@ -6,29 +6,16 @@ namespace $.$$ {
 
 	export type $bun_tasks_date_type = 'undone' | 'done' | 'next'
 
-	type Data_date_bar = Array< string >
+	type Bar_task_ids = Array< string >
 
-	type Data_date = Record< string, Data_date_bar >
+	type Date_bars = Record< string, Bar_task_ids >
 
-	type Data = Record<
+	type Date_list = Record<
 		string,
-		Data_date
+		Date_bars
 	>
 
 	export class $bun_tasks extends $.$bun_tasks {
-		@ $mol_mem
-		date_selected( next?: $mol_time_moment ): $mol_time_moment {
-			return next ?? new $mol_time_moment()
-		}
-
-		@ $mol_mem
-		date_selected_id() {
-			var date = this.date_selected()
-
-			var date_id = date.toString( "YYYY-MM-DD" )
-
-			return date_id
-		}
 
 		@ $mol_mem
 		tasks_data( next?: $bun_type_nullable< $bun_tasks_tasks_data > ) {
@@ -57,11 +44,16 @@ namespace $.$$ {
 				return null
 			}
 
+			this.tasks_data( {
+				... this.tasks_data(),
+				[ id ]: next?.data() ?? null,
+			} )
+
 			return next
 		}
 
 		@ $mol_mem
-		data( next?: Data ): Data {
+		date_list( next?: Date_list ) {
 			if ( next !== undefined ) {
 				Object.entries( next ).forEach( ( [ date, bars ] ) => {
 					if ( Object.values( bars ).every( ids => ids.length === 0 ) ) {
@@ -70,48 +62,62 @@ namespace $.$$ {
 				} )
 			}
 
-			return $mol_state_local.value( 'data', next ) ?? {}
+			return $mol_state_local.value( 'date_list', next ) ?? {}
 		}
 
 		@ $mol_mem_key
-		data_dates( date_id: string, next?: Data_date ) {
+		date_bars( date_id: string, next?: Date_bars ) {
 			if ( next !== undefined ) {
-				this.data(
+				this.date_list(
 					{
-						... this.data(),
+						... this.date_list(),
 						[ date_id ]: next,
 					}
 				)
 			}
 
-			return this.data()[ date_id ] ?? { '1': [], '2': [] }
+			return this.date_list()[ date_id ] ?? { '1': [], '2': [] }
 		}
 
 		@ $mol_mem_key
-		task_ids_date_bar( { 0: date_id, 1: bar } : [ string, string ], next?: Data_date_bar ) {
+		bar_task_ids( { 0: date_id, 1: bar } : [ string, string ], next?: Bar_task_ids ) {
 			if ( next !== undefined ) {
-				this.data_dates(
+				this.date_bars(
 					date_id,
 					{
-						... this.data_dates( date_id ),
+						... this.date_bars( date_id ),
 						[ bar ]: next,
 					},
 				)
 			}
-			return this.data_dates( date_id )[ bar ]
+			return this.date_bars( date_id )[ bar ]
 		}
 
 		@ $mol_mem_key
-		task_ids_date_current_bar( bar: string, next?: Data_date_bar ) {
-			return this.task_ids_date_bar( [ this.date_selected_id(), bar ], next )
+		bar_task_ids_current_date( bar: string, next?: Bar_task_ids ) {
+			return this.bar_task_ids( [ this.date_selected_id(), bar ], next )
 		}
 
 		@ $mol_mem_key
 		task_ids_date( date_id: string ) {
-			return Object.values( this.data_dates( date_id ) ).reduce( ( acc, ids )=> {
+			return Object.values( this.date_bars( date_id ) ).reduce( ( acc, ids )=> {
 				acc.push( ... ids )
 				return acc
 			}, [] )
+		}
+
+		@ $mol_mem
+		date_selected( next?: $mol_time_moment ): $mol_time_moment {
+			return next ?? new $mol_time_moment()
+		}
+
+		@ $mol_mem
+		date_selected_id() {
+			var date = this.date_selected()
+
+			var date_id = date.toString( "YYYY-MM-DD" )
+
+			return date_id
 		}
 
 		@ $mol_mem_key

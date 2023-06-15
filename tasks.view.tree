@@ -2,7 +2,7 @@ $bun_tasks $mol_page
 	title \Спиок дел
 	task*? null
 	date_selected_id \
-	task_ids_date_current_bar*? null
+	bar_task_ids_current_date*? null
 	date_type* null
 	attr *
 		^
@@ -16,12 +16,12 @@ $bun_tasks $mol_page
 				<= Bar_left $bun_tasks_bar
 					ord \1
 					date_id <= date_selected_id
-					task_ids? <=> task_ids_date_current_bar*1?
+					task_ids? <=> bar_task_ids_current_date*1?
 					task*? <=> task*?
 				<= Bar_right $bun_tasks_bar
 					ord \2
 					date_id <= date_selected_id
-					task_ids? <=> task_ids_date_current_bar*2?
+					task_ids? <=> bar_task_ids_current_date*2?
 					task*? <=> task*?
 
 $bun_tasks_enter_input $mol_string
