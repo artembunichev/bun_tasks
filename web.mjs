@@ -6629,6 +6629,9 @@ var $;
         __decorate([
             $mol_mem_key
         ], $bun_tasks_calendar.prototype, "Day_dot", null);
+        __decorate([
+            $mol_mem
+        ], $bun_tasks_calendar.prototype, "sub", null);
         $$.$bun_tasks_calendar = $bun_tasks_calendar;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
@@ -6649,91 +6652,6 @@ var $;
     $mol_style_attach("mol/row/row.view.css", "[mol_row] {\n\tdisplay: flex;\n\tflex-wrap: wrap;\n\talign-items: flex-start;\n\talign-content: flex-start;\n\tjustify-content: flex-start;\n\tpadding: var(--mol_gap_block);\n\tgap: var(--mol_gap_block);\n\tflex: 0 0 auto;\n\tbox-sizing: border-box;\n\tmax-width: 100%;\n}\n\n[mol_row] > * {\n\tmax-width: 100%;\n}\n");
 })($ || ($ = {}));
 //mol/row/-css/row.view.css.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_store extends $mol_object2 {
-        data_default;
-        constructor(data_default) {
-            super();
-            this.data_default = data_default;
-        }
-        data(next) {
-            return next === undefined ? this.data_default : next;
-        }
-        snapshot(next) {
-            return JSON.stringify(this.data(next === undefined ? next : JSON.parse(next)));
-        }
-        value(key, next) {
-            const data = this.data();
-            if (next === undefined)
-                return data && data[key];
-            const Constr = Reflect.getPrototypeOf(data).constructor;
-            this.data(Object.assign(new Constr, data, { [key]: next }));
-            return next;
-        }
-        selection(key, next = [0, 0]) {
-            return next;
-        }
-        sub(key, lens) {
-            if (!lens)
-                lens = new $mol_store();
-            const data = lens.data;
-            lens.data = next => {
-                if (next == undefined) {
-                    return this.value(key) ?? lens.data_default;
-                }
-                return this.value(key, next);
-            };
-            return lens;
-        }
-        reset() {
-            this.data(this.data_default);
-        }
-        active() {
-            return true;
-        }
-    }
-    __decorate([
-        $mol_mem
-    ], $mol_store.prototype, "data", null);
-    __decorate([
-        $mol_mem_key
-    ], $mol_store.prototype, "selection", null);
-    $.$mol_store = $mol_store;
-})($ || ($ = {}));
-//mol/store/store.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $bun_tasks_task_model extends $mol_store {
-        id;
-        constructor(id) {
-            super();
-            this.id = id;
-        }
-        data_default = { title: '', details: '', done: false };
-        data(data) {
-            return $mol_state_local.value(`task-${this.id}`, data) ?? this.data_default;
-        }
-        title(next) {
-            return this.value('title', next);
-        }
-        details(next) {
-            return this.value('details', next);
-        }
-        done(next) {
-            return this.value('done', next);
-        }
-    }
-    __decorate([
-        $mol_mem
-    ], $bun_tasks_task_model.prototype, "data", null);
-    $.$bun_tasks_task_model = $bun_tasks_task_model;
-})($ || ($ = {}));
-//bun/tasks/task/model.ts
 ;
 "use strict";
 var $;
@@ -7626,6 +7544,9 @@ var $;
             }
         }
         __decorate([
+            $mol_action
+        ], $bun_tasks_bar.prototype, "sort_task_ids", null);
+        __decorate([
             $mol_mem_key
         ], $bun_tasks_bar.prototype, "task_index", null);
         __decorate([
@@ -7637,6 +7558,27 @@ var $;
         __decorate([
             $mol_mem_key
         ], $bun_tasks_bar.prototype, "task_done", null);
+        __decorate([
+            $mol_action
+        ], $bun_tasks_bar.prototype, "add_task", null);
+        __decorate([
+            $mol_action
+        ], $bun_tasks_bar.prototype, "toggle_task_done", null);
+        __decorate([
+            $mol_action
+        ], $bun_tasks_bar.prototype, "drop_task", null);
+        __decorate([
+            $mol_action
+        ], $bun_tasks_bar.prototype, "move_task_up", null);
+        __decorate([
+            $mol_action
+        ], $bun_tasks_bar.prototype, "move_task_down", null);
+        __decorate([
+            $mol_action
+        ], $bun_tasks_bar.prototype, "move_task_top", null);
+        __decorate([
+            $mol_action
+        ], $bun_tasks_bar.prototype, "move_task_bottom", null);
         __decorate([
             $mol_mem
         ], $bun_tasks_bar.prototype, "tasks", null);
@@ -7660,7 +7602,7 @@ var $;
         date_selected_id() {
             return "";
         }
-        task_ids_date_current_bar(id, next) {
+        bar_task_ids_current_date(id, next) {
             if (next !== undefined)
                 return next;
             return null;
@@ -7695,7 +7637,7 @@ var $;
             const obj = new this.$.$bun_tasks_bar();
             obj.ord = () => "1";
             obj.date_id = () => this.date_selected_id();
-            obj.task_ids = (next) => this.task_ids_date_current_bar("1", next);
+            obj.task_ids = (next) => this.bar_task_ids_current_date("1", next);
             obj.task = (id, next) => this.task(id, next);
             return obj;
         }
@@ -7703,7 +7645,7 @@ var $;
             const obj = new this.$.$bun_tasks_bar();
             obj.ord = () => "2";
             obj.date_id = () => this.date_selected_id();
-            obj.task_ids = (next) => this.task_ids_date_current_bar("2", next);
+            obj.task_ids = (next) => this.bar_task_ids_current_date("2", next);
             obj.task = (id, next) => this.task(id, next);
             return obj;
         }
@@ -7722,7 +7664,7 @@ var $;
     ], $bun_tasks.prototype, "task", null);
     __decorate([
         $mol_mem_key
-    ], $bun_tasks.prototype, "task_ids_date_current_bar", null);
+    ], $bun_tasks.prototype, "bar_task_ids_current_date", null);
     __decorate([
         $mol_mem
     ], $bun_tasks.prototype, "date_selected", null);
@@ -7813,60 +7755,34 @@ var $;
 //bun/tasks/-view.tree/tasks.view.tree.ts
 ;
 "use strict";
+//bun/type/nullable/nullable.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("bun/tasks/tasks.view.css", "mol_button {\n\tcursor: pointer !important;\n}\n\n[ bun_tasks_calendar_bubble ] {\n\tposition: relative;\n\ttop: 0;\n\tleft: 0;\n\tmax-height: 370px !important;\n\tbox-shadow: none;\n\tborder: 1px solid #000000;\n}\n\n[ mol_calendar_holiday ] {\n\tcolor: #ff0000;\n}\n\n[ bun_tasks_calendar ] [ mol_theme=\"$mol_theme_current\" ] {\n\tbackground-color: #41dcea5e;\n}\n\n[ mol_calendar_day ] {\n\tposition: relative;\n\tborder-radius: 0;\n\tborder: 0.1px solid #000000;\n}\n\n[ bun_tasks_calendar_day_dot ] {\n\tposition: absolute;\n\ttop: 2px;\n\tleft: 2px;\n\twidth: 5.5px;\n\theight: 5.5px;\n\tborder-radius: 50%;\n}\n\n[ dot_type = 'next' ] {\n\tbackground-color: #eada00;\n}\n\n[ dot_type = 'done' ] {\n\tbackground-color: #00ea10;\n}\n\n[ dot_type = 'undone' ] {\n\tbackground-color: #ea0000;\n}\n\n[ bun_tasks_bar_row ] {\n\twidth: 100%;\n\tdisplay: flex;\n}\n\n[ current_date ] {\n\ttext-decoration: underline;\n\tfont-weight: bold;\n}\n\n[ bun_tasks_bar ] {\n\tflex: 1 0 0;\n\tdisplay: flex;\n\tflex-direction: column;\n\tbackground-color: #f5f8fc;\n\tpadding: 10px;\n\tborder-radius: 8px;\n\tborder: 1px solid #000000;\n}\n\n[ done ] {\n\ttext-decoration: line-through;\n}\n\n[ bun_tasks_bar_task ] {\n\tdisplay: flex;\n\tflex-direction: column;\n\tpadding: 15px;\n\tmargin: 9px 0;\n\tbackground-color: var( --mol_theme_card );\n\tborder-radius: 8px;\n\tborder: 1px solid #000000;\n}\n\n[ bun_tasks_bar_task ]:first-child {\n\tmargin-top: 0;\n}\n\n[ bun_tasks_task_item ] {\n\tpadding: 0;\n}\n\n[ bun_tasks_bar_task_content_row ] {\n\tpadding: 0;\n}\n\n[ bun_tasks_task_item_tools ] {\n\tdisplay: flex;\n\tflex-direction: column;\n\talign-items: center;\n\tmargin-right: 15px;\n}\n\n[ bun_tasks_task_item_content ] {\n\tdisplay: flex;\n\tjustify-content: space-between;\n\talign-items: center;\n}\n\n[ bun_tasks_task_item_text_content ] {\n\tjustify-content: center;\n}\n\n[ bun_tasks_task_item_title ] {\n\tdisplay: flex;\n\tjustify-content: space-between;\n\tfont-size: 24px;\n}\n\n[ bun_tasks_task_item_details ] {\n\tfont-size: 19px;\n\tcolor: #6d6d6d;\n\tmargin-top: 2.4px;\n}\n");
+})($ || ($ = {}));
+//bun/tasks/-css/tasks.view.css.ts
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
     (function ($$) {
         class $bun_tasks extends $.$bun_tasks {
-            date_selected(next) {
-                return next ?? new $mol_time_moment();
-            }
-            date_selected_id() {
-                var date = this.date_selected();
-                var date_id = date.toString("YYYY-MM-DD");
-                return date_id;
-            }
-            data(next) {
+            tasks_data(next) {
                 if (next !== undefined) {
-                    Object.entries(next).forEach(([date, bars]) => {
-                        if (Object.values(bars).every(ids => ids.length === 0)) {
-                            delete next[date];
+                    Object.entries(next).forEach(([id, task]) => {
+                        if (task === null) {
+                            delete next[id];
                         }
                     });
                 }
-                return $mol_state_local.value('data', next) ?? {};
-            }
-            data_dates(date_id, next) {
-                if (next !== undefined) {
-                    this.data({
-                        ...this.data(),
-                        [date_id]: next,
-                    });
-                }
-                return this.data()[date_id] ?? { '1': [], '2': [] };
-            }
-            task_ids_date_bar({ 0: date_id, 1: bar }, next) {
-                if (next !== undefined) {
-                    this.data_dates(date_id, {
-                        ...this.data_dates(date_id),
-                        [bar]: next,
-                    });
-                }
-                return this.data_dates(date_id)[bar];
-            }
-            task_ids_date_current_bar(bar, next) {
-                return this.task_ids_date_bar([this.date_selected_id(), bar], next);
-            }
-            task_ids_date(date_id) {
-                return Object.values(this.data_dates(date_id)).reduce((acc, ids) => {
-                    acc.push(...ids);
-                    return acc;
-                }, []);
+                return $mol_state_local.value('tasks', next) ?? {};
             }
             task(id, next) {
-                var key = `task-${id}`;
                 if (next === undefined) {
-                    var model_data = $mol_state_local.value(key, next);
+                    var model_data = this.tasks_data()[id];
                     if (model_data) {
                         var model = new $bun_tasks_task_model(id);
                         model.data(model_data);
@@ -7874,10 +7790,56 @@ var $;
                     }
                     return null;
                 }
-                if (next === null) {
-                    return $mol_state_local.value(key, null);
-                }
+                this.tasks_data({
+                    ...this.tasks_data(),
+                    [id]: next?.data() ?? null,
+                });
                 return next;
+            }
+            date_list(next) {
+                if (next !== undefined) {
+                    Object.entries(next).forEach(([date, bars]) => {
+                        if (Object.values(bars).every(ids => ids.length === 0)) {
+                            delete next[date];
+                        }
+                    });
+                }
+                return $mol_state_local.value('date_list', next) ?? {};
+            }
+            date_bars(date_id, next) {
+                if (next !== undefined) {
+                    this.date_list({
+                        ...this.date_list(),
+                        [date_id]: next,
+                    });
+                }
+                return this.date_list()[date_id] ?? { '1': [], '2': [] };
+            }
+            bar_task_ids({ 0: date_id, 1: bar }, next) {
+                if (next !== undefined) {
+                    this.date_bars(date_id, {
+                        ...this.date_bars(date_id),
+                        [bar]: next,
+                    });
+                }
+                return this.date_bars(date_id)[bar];
+            }
+            bar_task_ids_current_date(bar, next) {
+                return this.bar_task_ids([this.date_selected_id(), bar], next);
+            }
+            task_ids_date(date_id) {
+                return Object.values(this.date_bars(date_id)).reduce((acc, ids) => {
+                    acc.push(...ids);
+                    return acc;
+                }, []);
+            }
+            date_selected(next) {
+                return next ?? new $mol_time_moment();
+            }
+            date_selected_id() {
+                var date = this.date_selected();
+                var date_id = date.toString("YYYY-MM-DD");
+                return date_id;
             }
             is_date_done(date_id) {
                 var is_prev_day = $bun_tasks_time_is_prev(date_id);
@@ -7936,28 +7898,31 @@ var $;
         }
         __decorate([
             $mol_mem
-        ], $bun_tasks.prototype, "date_selected", null);
+        ], $bun_tasks.prototype, "tasks_data", null);
+        __decorate([
+            $mol_mem_key
+        ], $bun_tasks.prototype, "task", null);
         __decorate([
             $mol_mem
-        ], $bun_tasks.prototype, "date_selected_id", null);
-        __decorate([
-            $mol_mem
-        ], $bun_tasks.prototype, "data", null);
+        ], $bun_tasks.prototype, "date_list", null);
         __decorate([
             $mol_mem_key
-        ], $bun_tasks.prototype, "data_dates", null);
+        ], $bun_tasks.prototype, "date_bars", null);
         __decorate([
             $mol_mem_key
-        ], $bun_tasks.prototype, "task_ids_date_bar", null);
+        ], $bun_tasks.prototype, "bar_task_ids", null);
         __decorate([
             $mol_mem_key
-        ], $bun_tasks.prototype, "task_ids_date_current_bar", null);
+        ], $bun_tasks.prototype, "bar_task_ids_current_date", null);
         __decorate([
             $mol_mem_key
         ], $bun_tasks.prototype, "task_ids_date", null);
         __decorate([
-            $mol_mem_key
-        ], $bun_tasks.prototype, "task", null);
+            $mol_mem
+        ], $bun_tasks.prototype, "date_selected", null);
+        __decorate([
+            $mol_mem
+        ], $bun_tasks.prototype, "date_selected_id", null);
         __decorate([
             $mol_mem_key
         ], $bun_tasks.prototype, "is_date_done", null);
@@ -7984,6 +7949,9 @@ var $;
         __decorate([
             $mol_mem
         ], $bun_tasks_editable_text.prototype, "edit_mode", null);
+        __decorate([
+            $mol_mem
+        ], $bun_tasks_editable_text.prototype, "sub", null);
         $$.$bun_tasks_editable_text = $bun_tasks_editable_text;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
@@ -7992,9 +7960,95 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("bun/tasks/tasks.view.css", "mol_button {\n\tcursor: pointer !important;\n}\n\n[ bun_tasks_calendar_bubble ] {\n\tposition: relative;\n\ttop: 0;\n\tleft: 0;\n\tmax-height: 370px !important;\n\tbox-shadow: none;\n\tborder: 1px solid #000000;\n}\n\n[ mol_calendar_holiday ] {\n\tcolor: #ff0000;\n}\n\n[ bun_tasks_calendar ] [ mol_theme=\"$mol_theme_current\" ] {\n\tbackground-color: #41dcea5e;\n}\n\n[ mol_calendar_day ] {\n\tposition: relative;\n\tborder-radius: 0;\n\tborder: 0.1px solid #000000;\n}\n\n[ bun_tasks_calendar_day_dot ] {\n\tposition: absolute;\n\ttop: 2px;\n\tleft: 2px;\n\twidth: 5.5px;\n\theight: 5.5px;\n\tborder-radius: 50%;\n}\n\n[ dot_type = 'next' ] {\n\tbackground-color: #eada00;\n}\n\n[ dot_type = 'done' ] {\n\tbackground-color: #00ea10;\n}\n\n[ dot_type = 'undone' ] {\n\tbackground-color: #ea0000;\n}\n\n[ bun_tasks_bar_row ] {\n\twidth: 100%;\n\tdisplay: flex;\n}\n\n[ current_date ] {\n\ttext-decoration: underline;\n\tfont-weight: bold;\n}\n\n[ bun_tasks_bar ] {\n\tflex: 1 0 0;\n\tdisplay: flex;\n\tflex-direction: column;\n\tbackground-color: #f5f8fc;\n\tpadding: 10px;\n\tborder-radius: 8px;\n\tborder: 1px solid #000000;\n}\n\n[ done ] {\n\ttext-decoration: line-through;\n}\n\n[ bun_tasks_bar_task ] {\n\tdisplay: flex;\n\tflex-direction: column;\n\tpadding: 15px;\n\tmargin: 9px 0;\n\tbackground-color: var( --mol_theme_card );\n\tborder-radius: 8px;\n\tborder: 1px solid #000000;\n}\n\n[ bun_tasks_bar_task ]:first-child {\n\tmargin-top: 0;\n}\n\n[ bun_tasks_task_item ] {\n\tpadding: 0;\n}\n\n[ bun_tasks_bar_task_content_row ] {\n\tpadding: 0;\n}\n\n[ bun_tasks_task_item_tools ] {\n\tdisplay: flex;\n\tflex-direction: column;\n\talign-items: center;\n\tmargin-right: 15px;\n}\n\n[ bun_tasks_task_item_content ] {\n\tdisplay: flex;\n\tjustify-content: space-between;\n\talign-items: center;\n}\n\n[ bun_tasks_task_item_text_content ] {\n\tjustify-content: center;\n}\n\n[ bun_tasks_task_item_title ] {\n\tdisplay: flex;\n\tjustify-content: space-between;\n\tfont-size: 24px;\n}\n\n[ bun_tasks_task_item_details ] {\n\tfont-size: 19px;\n\tcolor: #6d6d6d;\n\tmargin-top: 2.4px;\n}\n");
+    class $mol_store extends $mol_object2 {
+        data_default;
+        constructor(data_default) {
+            super();
+            this.data_default = data_default;
+        }
+        data(next) {
+            return next === undefined ? this.data_default : next;
+        }
+        snapshot(next) {
+            return JSON.stringify(this.data(next === undefined ? next : JSON.parse(next)));
+        }
+        value(key, next) {
+            const data = this.data();
+            if (next === undefined)
+                return data && data[key];
+            const Constr = Reflect.getPrototypeOf(data).constructor;
+            this.data(Object.assign(new Constr, data, { [key]: next }));
+            return next;
+        }
+        selection(key, next = [0, 0]) {
+            return next;
+        }
+        sub(key, lens) {
+            if (!lens)
+                lens = new $mol_store();
+            const data = lens.data;
+            lens.data = next => {
+                if (next == undefined) {
+                    return this.value(key) ?? lens.data_default;
+                }
+                return this.value(key, next);
+            };
+            return lens;
+        }
+        reset() {
+            this.data(this.data_default);
+        }
+        active() {
+            return true;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_store.prototype, "data", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_store.prototype, "selection", null);
+    $.$mol_store = $mol_store;
 })($ || ($ = {}));
-//bun/tasks/-css/tasks.view.css.ts
+//mol/store/store.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $bun_tasks_task_model extends $mol_store {
+        id;
+        constructor(id) {
+            super();
+            this.id = id;
+        }
+        data_default = { title: '', details: '', done: false };
+        data(data) {
+            if (data) {
+                var tasks = $mol_state_local.value('tasks');
+                var new_tasks = {
+                    ...tasks,
+                    [this.id]: data
+                };
+                $mol_state_local.value('tasks', new_tasks);
+            }
+            return data ?? this.data_default;
+        }
+        title(next) {
+            return this.value('title', next);
+        }
+        details(next) {
+            return this.value('details', next);
+        }
+        done(next) {
+            return this.value('done', next);
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $bun_tasks_task_model.prototype, "data", null);
+    $.$bun_tasks_task_model = $bun_tasks_task_model;
+})($ || ($ = {}));
+//bun/tasks/task/model.ts
 
 export default $
 //# sourceMappingURL=web.js.map

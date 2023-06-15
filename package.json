@@ -193,7 +193,9 @@
     "$mol_icon_arrow_collapse_down",
     "$bun_array_move",
     "$bun_array",
-    "$bun_array_divide"
+    "$bun_array_divide",
+    "$bun_type_nullable",
+    "$bun_type"
   ],
   "dependencies": {
     "jsdom": "*",

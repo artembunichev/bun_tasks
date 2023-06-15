@@ -11,6 +11,7 @@
 \/bun
 	pack tasks git \https://github.com/spleekz/bun_tasks
 	pack array git \https://github.com/spleekz/bun_array
+	pack type git \https://github.com/spleekz/bun_type
 \/mol
 	pack icon git \https://github.com/nin-jin/mol_icon.git
 \/mol/view

@@ -2113,38 +2113,6 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_store<Data> extends $mol_object2 {
-        data_default?: Data | undefined;
-        constructor(data_default?: Data | undefined);
-        data(next?: Data): NonNullable<Data> | (Data & null);
-        snapshot(next?: string): string;
-        value<Key extends keyof Data>(key: Key, next?: Data[Key]): Data[Key] & {};
-        selection<Key extends keyof Data>(key: Key, next?: number[]): number[];
-        sub<Key extends keyof Data, Lens extends $mol_store<Data[Key]> = $mol_store<NonNullable<Data[Key]>>>(key: Key, lens?: Lens): Lens;
-        reset(): void;
-        active(): boolean;
-    }
-}
-
-declare namespace $ {
-    type Task_data = {
-        title: string;
-        details: string;
-        done: boolean;
-    };
-    export class $bun_tasks_task_model extends $mol_store<Task_data> {
-        readonly id: string;
-        constructor(id: string);
-        data_default: Task_data;
-        data(data?: Task_data): Task_data;
-        title(next?: string): string;
-        details(next?: string): string;
-        done(next?: boolean): boolean;
-    }
-    export {};
-}
-
-declare namespace $ {
     class $mol_icon_tick extends $mol_icon {
         path(): string;
     }
@@ -2344,7 +2312,7 @@ declare namespace $ {
         title(): string;
         task(id: any, next?: any): any;
         date_selected_id(): string;
-        task_ids_date_current_bar(id: any, next?: any): any;
+        bar_task_ids_current_date(id: any, next?: any): any;
         date_type(id: any): any;
         attr(): Record<string, any>;
         body(): readonly any[];
@@ -2368,20 +2336,33 @@ declare namespace $ {
     }
 }
 
+declare namespace $ {
+    type $bun_type_nullable<T> = {
+        [Key in keyof T]: T[Key] | null;
+    };
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
+    type $bun_tasks_tasks_data = Record<string, $bun_tasks_task_data>;
+}
 declare namespace $.$$ {
     export type $bun_tasks_date_type = 'undone' | 'done' | 'next';
-    type Data_date_bar = Array<string>;
-    type Data_date = Record<string, Data_date_bar>;
-    type Data = Record<string, Data_date>;
+    type Bar_task_ids = Array<string>;
+    type Date_bars = Record<string, Bar_task_ids>;
+    type Date_list = Record<string, Date_bars>;
     export class $bun_tasks extends $.$bun_tasks {
+        tasks_data(next?: $bun_type_nullable<$bun_tasks_tasks_data>): $bun_tasks_tasks_data;
+        task(id: string, next?: $bun_tasks_task_model | null): $bun_tasks_task_model | null;
+        date_list(next?: Date_list): Date_list;
+        date_bars(date_id: string, next?: Date_bars): Date_bars;
+        bar_task_ids({ 0: date_id, 1: bar }: [string, string], next?: Bar_task_ids): Bar_task_ids;
+        bar_task_ids_current_date(bar: string, next?: Bar_task_ids): Bar_task_ids;
+        task_ids_date(date_id: string): Bar_task_ids;
         date_selected(next?: $mol_time_moment): $mol_time_moment;
         date_selected_id(): string;
-        data(next?: Data): Data;
-        data_dates(date_id: string, next?: Data_date): Data_date;
-        task_ids_date_bar({ 0: date_id, 1: bar }: [string, string], next?: Data_date_bar): Data_date_bar;
-        task_ids_date_current_bar(bar: string, next?: Data_date_bar): Data_date_bar;
-        task_ids_date(date_id: string): Data_date_bar;
-        task(id: string, next?: $bun_tasks_task_model | null): $bun_tasks_task_model | null;
         is_date_done(date_id: string): boolean;
         is_date_undone(date_id: string): boolean;
         is_date_next(date_id: string): boolean;
@@ -2395,6 +2376,34 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
+    class $mol_store<Data> extends $mol_object2 {
+        data_default?: Data | undefined;
+        constructor(data_default?: Data | undefined);
+        data(next?: Data): NonNullable<Data> | (Data & null);
+        snapshot(next?: string): string;
+        value<Key extends keyof Data>(key: Key, next?: Data[Key]): Data[Key] & {};
+        selection<Key extends keyof Data>(key: Key, next?: number[]): number[];
+        sub<Key extends keyof Data, Lens extends $mol_store<Data[Key]> = $mol_store<NonNullable<Data[Key]>>>(key: Key, lens?: Lens): Lens;
+        reset(): void;
+        active(): boolean;
+    }
+}
+
+declare namespace $ {
+    type $bun_tasks_task_data = {
+        title: string;
+        details: string;
+        done: boolean;
+    };
+    class $bun_tasks_task_model extends $mol_store<$bun_tasks_task_data> {
+        readonly id: string;
+        constructor(id: string);
+        data_default: $bun_tasks_task_data;
+        data(data?: $bun_tasks_task_data): $bun_tasks_task_data;
+        title(next?: string): string;
+        details(next?: string): string;
+        done(next?: boolean): boolean;
+    }
 }
 
 export = $;
