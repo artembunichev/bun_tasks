@@ -1,3 +1,7 @@
+namespace $ {
+	export type $bun_tasks_tasks_data = Record< string, $bun_tasks_task_data >
+}
+
 namespace $.$$ {
 
 	export type $bun_tasks_date_type = 'undone' | 'done' | 'next'
@@ -24,6 +28,36 @@ namespace $.$$ {
 			var date_id = date.toString( "YYYY-MM-DD" )
 
 			return date_id
+		}
+
+		@ $mol_mem
+		tasks_data( next?: $bun_type_nullable< $bun_tasks_tasks_data > ) {
+			if ( next !== undefined ) {
+				Object.entries( next ).forEach( ( [ id, task ] )=> {
+					if ( task === null ) {
+						delete next[ id ]
+					}
+				} )
+			}
+
+			return $mol_state_local.value( 'tasks', next as $bun_tasks_tasks_data ) ?? {}
+		}
+
+		@ $mol_mem_key
+		task( id: string, next?: $bun_tasks_task_model | null ) {
+			if ( next === undefined ) {
+				var model_data = this.tasks_data()[ id ]
+
+				if ( model_data ) {
+					var model = new $bun_tasks_task_model( id )
+					model.data( model_data )
+					return model
+				}
+
+				return null
+			}
+
+			return next
 		}
 
 		@ $mol_mem
@@ -78,29 +112,6 @@ namespace $.$$ {
 				acc.push( ... ids )
 				return acc
 			}, [] )
-		}
-
-		@ $mol_mem_key
-		task( id: string, next?: $bun_tasks_task_model | null ) {
-			var key = `task-${ id }`
-
-			if ( next === undefined ) {
-				var model_data = $mol_state_local.value( key, next )
-
-				if ( model_data ) {
-					var model = new $bun_tasks_task_model( id )
-					model.data( model_data )
-					return model
-				}
-
-				return null
-			}
-
-			if ( next === null ) {
-				return $mol_state_local.value( key, null )
-			}
-
-			return next
 		}
 
 		@ $mol_mem_key
