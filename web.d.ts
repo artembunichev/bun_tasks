@@ -2103,7 +2103,9 @@ declare namespace $ {
         Content(): $mol_row;
     }
     class $bun_tasks_bar extends $mol_view {
-        ids(next?: any): readonly string[];
+        ord(): string;
+        date_id(): string;
+        task_ids(next?: any): readonly string[];
         task(id: any, next?: any): any;
         sub(): readonly any[];
         input_title_value(next?: any): string;
@@ -2126,12 +2128,12 @@ declare namespace $ {
         List(): $$.$mol_list;
     }
     class $bun_tasks extends $mol_page {
+        title(): string;
         task(id: any, next?: any): any;
-        current_task_bar_id(id: any): string;
-        current_task_bar_task_ids(id: any, next?: any): readonly string[];
+        date_selected_id(): string;
+        task_ids_date_current_bar(id: any, next?: any): any;
         date_type(id: any): any;
         attr(): Record<string, any>;
-        title(): string;
         body(): readonly any[];
         date_selected(next?: any): $mol_time_moment;
         Calendar(): $$.$bun_tasks_calendar;
@@ -2182,25 +2184,26 @@ declare namespace $ {
 }
 
 declare namespace $.$$ {
-    type $bun_tasks_date_type = 'undone' | 'done' | 'next';
-    class $bun_tasks extends $.$bun_tasks {
+    export type $bun_tasks_date_type = 'undone' | 'done' | 'next';
+    type Data_date_bar = Array<string>;
+    type Data_date = Record<string, Data_date_bar>;
+    type Data = Record<string, Data_date>;
+    export class $bun_tasks extends $.$bun_tasks {
         date_selected(next?: $mol_time_moment): $mol_time_moment;
         date_selected_id(): string;
+        data(next?: Data): Data;
+        data_dates(date_id: string, next?: Data_date): Data_date;
+        task_ids_date_bar({ 0: date_id, 1: bar }: [string, string], next?: Data_date_bar): Data_date_bar;
+        task_ids_date_current_bar(bar: string, next?: Data_date_bar): Data_date_bar;
+        task_ids_date(date_id: string): Data_date_bar;
         task(id: string, next?: $bun_tasks_task_model | null): $bun_tasks_task_model | null;
-        task_bar_id(date: string, ord_id: number): string;
-        current_task_bar_id(ord_id: number): string;
-        task_bar_task_ids(id: string, next?: Array<string>): string[];
-        current_task_bar_task_ids(ord_id: number, next?: Array<string>): string[];
-        date_all_task_ids(id: string): string[];
-        is_date_done(id: string): boolean;
-        is_date_undone(id: string): boolean;
-        is_date_next(id: string): boolean;
-        date_type(id: string): $bun_tasks_date_type | null;
+        is_date_done(date_id: string): boolean;
+        is_date_undone(date_id: string): boolean;
+        is_date_next(date_id: string): boolean;
+        date_type(date_id: string): $bun_tasks_date_type | null;
     }
-    class $bun_tasks_bar extends $.$bun_tasks_bar {
-        id(next?: string): string;
-        ord_ids(): number[];
-        new_id(): string;
+    export class $bun_tasks_bar extends $.$bun_tasks_bar {
+        new_task_id(): string;
         sort_task_ids(): void;
         task_index(id: string): number;
         task_title(id: string, next?: string): any;
@@ -2215,20 +2218,21 @@ declare namespace $.$$ {
         move_task_bottom(id: string): void;
         tasks(): $bun_tasks_task_item[];
     }
-    class $bun_tasks_task_item extends $.$bun_tasks_task_item {
+    export class $bun_tasks_task_item extends $.$bun_tasks_task_item {
         edit_mode(next?: boolean): boolean;
         toggle_edit_mode(): void;
         quit_edit_mode(): void;
     }
-    class $bun_tasks_editable_text extends $.$bun_tasks_editable_text {
+    export class $bun_tasks_editable_text extends $.$bun_tasks_editable_text {
         edit_mode(next?: boolean): boolean;
         sub(): ($mol_view | $bun_tasks_enter_input)[];
     }
-    class $bun_tasks_calendar extends $.$bun_tasks_calendar {
+    export class $bun_tasks_calendar extends $.$bun_tasks_calendar {
         Day_dot(id: string): $mol_view;
         Task_calendar(): void;
         sub(): void[];
     }
+    export {};
 }
 
 declare namespace $ {

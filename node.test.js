@@ -7885,7 +7885,13 @@ var $;
     ], $bun_tasks_task_item.prototype, "Content", null);
     $.$bun_tasks_task_item = $bun_tasks_task_item;
     class $bun_tasks_bar extends $mol_view {
-        ids(next) {
+        ord() {
+            return "0";
+        }
+        date_id() {
+            return "2023-01-01";
+        }
+        task_ids(next) {
             if (next !== undefined)
                 return next;
             return [];
@@ -8007,7 +8013,7 @@ var $;
     }
     __decorate([
         $mol_mem
-    ], $bun_tasks_bar.prototype, "ids", null);
+    ], $bun_tasks_bar.prototype, "task_ids", null);
     __decorate([
         $mol_mem_key
     ], $bun_tasks_bar.prototype, "task", null);
@@ -8061,18 +8067,21 @@ var $;
     ], $bun_tasks_bar.prototype, "List", null);
     $.$bun_tasks_bar = $bun_tasks_bar;
     class $bun_tasks extends $mol_page {
+        title() {
+            return "Спиок дел";
+        }
         task(id, next) {
             if (next !== undefined)
                 return next;
             return null;
         }
-        current_task_bar_id(id) {
-            return "0-0";
+        date_selected_id() {
+            return "";
         }
-        current_task_bar_task_ids(id, next) {
+        task_ids_date_current_bar(id, next) {
             if (next !== undefined)
                 return next;
-            return [];
+            return null;
         }
         date_type(id) {
             return null;
@@ -8082,9 +8091,6 @@ var $;
                 ...super.attr(),
                 mol_theme: "$mol_theme_light"
             };
-        }
-        title() {
-            return "Спиок дел";
         }
         body() {
             return [
@@ -8105,15 +8111,17 @@ var $;
         }
         Bar_left() {
             const obj = new this.$.$bun_tasks_bar();
-            obj.id = () => this.current_task_bar_id("1");
-            obj.ids = (next) => this.current_task_bar_task_ids("1", next);
+            obj.ord = () => "1";
+            obj.date_id = () => this.date_selected_id();
+            obj.task_ids = (next) => this.task_ids_date_current_bar("1", next);
             obj.task = (id, next) => this.task(id, next);
             return obj;
         }
         Bar_right() {
             const obj = new this.$.$bun_tasks_bar();
-            obj.id = () => this.current_task_bar_id("2");
-            obj.ids = (next) => this.current_task_bar_task_ids("2", next);
+            obj.ord = () => "2";
+            obj.date_id = () => this.date_selected_id();
+            obj.task_ids = (next) => this.task_ids_date_current_bar("2", next);
             obj.task = (id, next) => this.task(id, next);
             return obj;
         }
@@ -8132,7 +8140,7 @@ var $;
     ], $bun_tasks.prototype, "task", null);
     __decorate([
         $mol_mem_key
-    ], $bun_tasks.prototype, "current_task_bar_task_ids", null);
+    ], $bun_tasks.prototype, "task_ids_date_current_bar", null);
     __decorate([
         $mol_mem
     ], $bun_tasks.prototype, "date_selected", null);
@@ -8266,6 +8274,43 @@ var $;
                 var date_id = date.toString("YYYY-MM-DD");
                 return date_id;
             }
+            data(next) {
+                if (next !== undefined) {
+                    Object.entries(next).forEach(([date, bars]) => {
+                        if (Object.values(bars).every(ids => ids.length === 0)) {
+                            delete next[date];
+                        }
+                    });
+                }
+                return $mol_state_local.value('data', next) ?? {};
+            }
+            data_dates(date_id, next) {
+                if (next !== undefined) {
+                    this.data({
+                        ...this.data(),
+                        [date_id]: next,
+                    });
+                }
+                return this.data()[date_id] ?? { '1': [], '2': [] };
+            }
+            task_ids_date_bar({ 0: date_id, 1: bar }, next) {
+                if (next !== undefined) {
+                    this.data_dates(date_id, {
+                        ...this.data_dates(date_id),
+                        [bar]: next,
+                    });
+                }
+                return this.data_dates(date_id)[bar];
+            }
+            task_ids_date_current_bar(bar, next) {
+                return this.task_ids_date_bar([this.date_selected_id(), bar], next);
+            }
+            task_ids_date(date_id) {
+                return Object.values(this.data_dates(date_id)).reduce((acc, ids) => {
+                    acc.push(...ids);
+                    return acc;
+                }, []);
+            }
             task(id, next) {
                 var key = `task-${id}`;
                 if (next === undefined) {
@@ -8282,30 +8327,12 @@ var $;
                 }
                 return next;
             }
-            task_bar_id(date, ord_id) {
-                return `${date}-${ord_id}`;
-            }
-            current_task_bar_id(ord_id) {
-                return this.task_bar_id(this.date_selected_id(), ord_id);
-            }
-            task_bar_task_ids(id, next) {
-                return $mol_state_local.value(`task-ids-${id}`, next) ?? [];
-            }
-            current_task_bar_task_ids(ord_id, next) {
-                return this.task_bar_task_ids(this.current_task_bar_id(ord_id), next);
-            }
-            date_all_task_ids(id) {
-                return [
-                    ...this.task_bar_task_ids(this.task_bar_id(id, 1)),
-                    ...this.task_bar_task_ids(this.task_bar_id(id, 2))
-                ];
-            }
-            is_date_done(id) {
-                var is_prev_day = $bun_tasks_time_is_prev(id);
+            is_date_done(date_id) {
+                var is_prev_day = $bun_tasks_time_is_prev(date_id);
                 if (!is_prev_day) {
                     return false;
                 }
-                var task_ids = this.date_all_task_ids(id);
+                var task_ids = this.task_ids_date(date_id);
                 if (!task_ids.length) {
                     return false;
                 }
@@ -8314,12 +8341,12 @@ var $;
                     return task?.done() === true;
                 });
             }
-            is_date_undone(id) {
-                var is_prev_day = $bun_tasks_time_is_prev(id);
+            is_date_undone(date_id) {
+                var is_prev_day = $bun_tasks_time_is_prev(date_id);
                 if (!is_prev_day) {
                     return false;
                 }
-                var task_ids = this.date_all_task_ids(id);
+                var task_ids = this.task_ids_date(date_id);
                 if (!task_ids.length) {
                     return false;
                 }
@@ -8328,12 +8355,12 @@ var $;
                     return task?.done() === false;
                 });
             }
-            is_date_next(id) {
-                var is_next_day = $bun_tasks_time_is_next(id);
+            is_date_next(date_id) {
+                var is_next_day = $bun_tasks_time_is_next(date_id);
                 if (!is_next_day) {
                     return false;
                 }
-                var task_ids = this.date_all_task_ids(id);
+                var task_ids = this.task_ids_date(date_id);
                 if (!task_ids.length) {
                     return false;
                 }
@@ -8342,14 +8369,14 @@ var $;
                     return task?.done() === false;
                 });
             }
-            date_type(id) {
-                if (this.is_date_done(id)) {
+            date_type(date_id) {
+                if (this.is_date_done(date_id)) {
                     return 'done';
                 }
-                else if (this.is_date_undone(id)) {
+                else if (this.is_date_undone(date_id)) {
                     return 'undone';
                 }
-                else if (this.is_date_next(id)) {
+                else if (this.is_date_next(date_id)) {
                     return 'next';
                 }
                 return null;
@@ -8362,20 +8389,23 @@ var $;
             $mol_mem
         ], $bun_tasks.prototype, "date_selected_id", null);
         __decorate([
+            $mol_mem
+        ], $bun_tasks.prototype, "data", null);
+        __decorate([
+            $mol_mem_key
+        ], $bun_tasks.prototype, "data_dates", null);
+        __decorate([
+            $mol_mem_key
+        ], $bun_tasks.prototype, "task_ids_date_bar", null);
+        __decorate([
+            $mol_mem_key
+        ], $bun_tasks.prototype, "task_ids_date_current_bar", null);
+        __decorate([
+            $mol_mem_key
+        ], $bun_tasks.prototype, "task_ids_date", null);
+        __decorate([
             $mol_mem_key
         ], $bun_tasks.prototype, "task", null);
-        __decorate([
-            $mol_mem_key
-        ], $bun_tasks.prototype, "current_task_bar_id", null);
-        __decorate([
-            $mol_mem_key
-        ], $bun_tasks.prototype, "task_bar_task_ids", null);
-        __decorate([
-            $mol_mem_key
-        ], $bun_tasks.prototype, "current_task_bar_task_ids", null);
-        __decorate([
-            $mol_mem_key
-        ], $bun_tasks.prototype, "date_all_task_ids", null);
         __decorate([
             $mol_mem_key
         ], $bun_tasks.prototype, "is_date_done", null);
@@ -8390,22 +8420,16 @@ var $;
         ], $bun_tasks.prototype, "date_type", null);
         $$.$bun_tasks = $bun_tasks;
         class $bun_tasks_bar extends $.$bun_tasks_bar {
-            id(next) {
-                return next ?? '0-0';
-            }
-            ord_ids() {
-                return this.ids().map(id => Number(id.split('-').at(-1)));
-            }
-            new_id() {
-                return `${this.id()}-${Math.max(0, ...this.ord_ids()) + 1}`;
+            new_task_id() {
+                return $mol_guid(6);
             }
             sort_task_ids() {
-                this.ids(this.ids().slice().sort((a, b) => {
+                this.task_ids(this.task_ids().slice().sort((a, b) => {
                     return Number(this.task_done(a)) - Number(this.task_done(b));
                 }));
             }
             task_index(id) {
-                return this.ids().findIndex(id2 => id === id2);
+                return this.task_ids().findIndex(id2 => id === id2);
             }
             task_title(id, next) {
                 return this.task(id)?.title(next) ?? '';
@@ -8420,12 +8444,12 @@ var $;
                 if (!this.input_title_value() && !this.input_details_value()) {
                     return;
                 }
-                const new_id = this.new_id();
-                var new_task = new $bun_tasks_task_model(new_id);
+                const new_task_id = this.new_task_id();
+                var new_task = new $bun_tasks_task_model(new_task_id);
                 new_task.title(this.input_title_value());
                 new_task.details(this.input_details_value());
-                this.task(new_id, new_task);
-                this.ids([...this.ids(), new_id]);
+                this.task(new_task_id, new_task);
+                this.task_ids([...this.task_ids(), new_task_id]);
                 this.sort_task_ids();
                 this.input_title_value('');
                 this.input_details_value('');
@@ -8436,32 +8460,26 @@ var $;
             }
             drop_task(id) {
                 this.task(id, null);
-                this.ids(this.ids().filter(id2 => id2 !== id));
+                this.task_ids(this.task_ids().filter(id2 => id2 !== id));
             }
             move_task_up(id) {
-                this.ids($bun_array_move_up(this.ids(), this.task_index(id)));
+                this.task_ids($bun_array_move_up(this.task_ids(), this.task_index(id)));
             }
             move_task_down(id) {
-                this.ids($bun_array_move_down(this.ids(), this.task_index(id)));
+                this.task_ids($bun_array_move_down(this.task_ids(), this.task_index(id)));
             }
             move_task_top(id) {
-                this.ids($bun_array_move_top(this.ids(), this.task_index(id)));
+                this.task_ids($bun_array_move_top(this.task_ids(), this.task_index(id)));
             }
             move_task_bottom(id) {
-                var { before: undone_ids, after: done_ids } = $bun_array_divide(this.ids(), (id) => this.task_done(id));
+                var { before: undone_ids, after: done_ids } = $bun_array_divide(this.task_ids(), (id) => this.task_done(id));
                 var new_undone_ids = $bun_array_move_bottom(undone_ids, this.task_index(id));
-                this.ids([...new_undone_ids, ...done_ids]);
+                this.task_ids([...new_undone_ids, ...done_ids]);
             }
             tasks() {
-                return this.ids().map(id => this.Task(id));
+                return this.task_ids().map(id => this.Task(id));
             }
         }
-        __decorate([
-            $mol_mem
-        ], $bun_tasks_bar.prototype, "id", null);
-        __decorate([
-            $mol_mem
-        ], $bun_tasks_bar.prototype, "ord_ids", null);
         __decorate([
             $mol_mem_key
         ], $bun_tasks_bar.prototype, "task_index", null);
@@ -8474,6 +8492,9 @@ var $;
         __decorate([
             $mol_mem_key
         ], $bun_tasks_bar.prototype, "task_done", null);
+        __decorate([
+            $mol_mem
+        ], $bun_tasks_bar.prototype, "tasks", null);
         $$.$bun_tasks_bar = $bun_tasks_bar;
         class $bun_tasks_task_item extends $.$bun_tasks_task_item {
             edit_mode(next) {
