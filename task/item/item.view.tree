@@ -9,7 +9,7 @@ $bun_tasks_task_item $mol_view
 			sub /
 				<= Left_side $mol_view
 					sub /
-						<= Tools $mol_list
+						<= Tools $mol_view
 							sub /
 								<= Checkbox $mol_check_box
 									checked?next <=> done?next null
@@ -17,7 +17,7 @@ $bun_tasks_task_item $mol_view
 								<= Edit_button $mol_button_minor
 									click? <=> toggle_edit_mode? null
 									sub / <= Edit_icon $mol_icon_pencil
-						<= Text_content $mol_list
+						<= Text_content $mol_view
 							sub /
 								<= Title $bun_tasks_editable_text
 									edit_mode <= edit_mode
@@ -29,19 +29,17 @@ $bun_tasks_task_item $mol_view
 									on_edit_enter? <=> quit_edit_mode? null
 				<= Right_side $mol_view
 					sub /
-						<= Extra_tools $mol_view
-							sub /
-								<= Drop_task_button $mol_button_minor
-									sub / <= Drop_task_icon $mol_icon_trash_can_outline
-									click? <=> drop? null
-								<= Popover $mol_pick
-									align \right_bottom
-									trigger_content / <= Dots_icon $mol_icon_dots_horizontal
-									bubble_content /
-										<= Controls $bun_tasks_task_item_controls
-											move_top? <=> move_top? null
-											move_up? <=> move_up? null
-											move_down? <=> move_down? null
-											move_bottom? <=> move_bottom? null
-											change_date? <=> change_date? null
-											date <= date
+						<= Drop_task_button $mol_button_minor
+							sub / <= Drop_task_icon $mol_icon_trash_can_outline
+							click? <=> drop? null
+						<= Popover $mol_pick
+							align \right_bottom
+							trigger_content / <= Dots_icon $mol_icon_dots_horizontal
+							bubble_content /
+								<= Controls $bun_tasks_task_item_controls
+									move_top? <=> move_top? null
+									move_up? <=> move_up? null
+									move_down? <=> move_down? null
+									move_bottom? <=> move_bottom? null
+									change_date? <=> change_date? null
+									date <= date

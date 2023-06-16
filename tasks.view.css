@@ -1,3 +1,8 @@
+[ mol_view ] {
+	flex-shrink: 1;
+	flex-wrap: nowrap;
+}
+
 mol_button {
 	cursor: pointer !important;
 }
@@ -87,6 +92,7 @@ mol_button {
 	background-color: var( --mol_theme_card );
 	border-radius: 8px;
 	border: 1px solid #000000;
+	overflow-wrap: break-word;
 }
 
 [ bun_tasks_bar_task ]:first-child {
@@ -95,10 +101,6 @@ mol_button {
 
 [ bun_tasks_task_item ] {
 	padding: 0;
-}
-
-[ bun_tasks_task_item_edit_button ] {
-	padding: 4px;
 }
 
 [ bun_tasks_bar_task_content_row ] {
@@ -116,9 +118,11 @@ mol_button {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	white-space: break-spaces;
 }
 
 [ bun_tasks_task_item_text_content ] {
+	flex-direction: column;
 	justify-content: center;
 }
 
@@ -132,4 +136,8 @@ mol_button {
 	font-size: 19px;
 	color: #6d6d6d;
 	margin-top: 2.4px;
+}
+
+[ bun_tasks_bar_task_right_side ] {
+	flex-shrink: 0;
 }
