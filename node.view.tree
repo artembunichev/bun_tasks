@@ -343,10 +343,28 @@ $mol_icon_arrow_down $mol_icon path \M11,4H13V16L18.5,10.5L19.92,11.92L12,19.84L
 
 $mol_icon_arrow_collapse_down $mol_icon path \M19.92,12.08L12,20L4.08,12.08L5.5,10.67L11,16.17V2H13V16.17L18.5,10.66L19.92,12.08M12,20H2V22H22V20H12Z
 
-$bun_tasks_task_item_options $mol_view
+$bun_tasks_task_item_controls $mol_view
+	change_date*? null
+	date \
 	sub /
 		<= List $mol_list
 			rows /
+				<= Change_date_pick $mol_pick
+					trigger_content /
+						<= Change_date_icon $mol_icon_calendar
+					align \left_bottom
+					bubble_content /
+						<= Change_date_options $mol_list
+							rows /
+								<= Plus_one $mol_button_minor
+									title \+ 1
+									click? <=> change_date_plus_one? null
+								<= Plus_two $mol_button_minor
+									title \+ 2
+									click? <=> change_date_plus_two? null
+								<= Plus_three $mol_button_minor
+									title \+ 3
+									click? <=> change_date_plus_three? null
 				<= Top_button $mol_button_minor
 					sub / <= Top_button_icon $mol_icon_arrow_collapse_up
 					click? <=> move_top? null
@@ -362,6 +380,7 @@ $bun_tasks_task_item_options $mol_view
 
 $bun_tasks_task_item $mol_view
 	edit_mode false
+	date \
 	attr *
 		^
 		done <= done
@@ -370,7 +389,7 @@ $bun_tasks_task_item $mol_view
 			sub /
 				<= Left_side $mol_view
 					sub /
-						<= Tools $mol_list
+						<= Tools $mol_view
 							sub /
 								<= Checkbox $mol_check_box
 									checked?next <=> done?next null
@@ -378,7 +397,7 @@ $bun_tasks_task_item $mol_view
 								<= Edit_button $mol_button_minor
 									click? <=> toggle_edit_mode? null
 									sub / <= Edit_icon $mol_icon_pencil
-						<= Text_content $mol_list
+						<= Text_content $mol_view
 							sub /
 								<= Title $bun_tasks_editable_text
 									edit_mode <= edit_mode
@@ -390,26 +409,27 @@ $bun_tasks_task_item $mol_view
 									on_edit_enter? <=> quit_edit_mode? null
 				<= Right_side $mol_view
 					sub /
-						<= Extra_tools $mol_view
-							sub /
-								<= Drop_task_button $mol_button_minor
-									sub / <= Drop_task_icon $mol_icon_trash_can_outline
-									click? <=> drop? null
-								<= Popover $mol_pick
-									align \right_bottom
-									trigger_content / <= Dots_icon $mol_icon_dots_horizontal
-									bubble_content /
-										<= Options $bun_tasks_task_item_options
-											move_top? <=> move_top? null
-											move_up? <=> move_up? null
-											move_down? <=> move_down? null
-											move_bottom? <=> move_bottom? null
+						<= Drop_task_button $mol_button_minor
+							sub / <= Drop_task_icon $mol_icon_trash_can_outline
+							click? <=> drop? null
+						<= Popover $mol_pick
+							align \right_bottom
+							trigger_content / <= Dots_icon $mol_icon_dots_horizontal
+							bubble_content /
+								<= Controls $bun_tasks_task_item_controls
+									move_top? <=> move_top? null
+									move_up? <=> move_up? null
+									move_down? <=> move_down? null
+									move_bottom? <=> move_bottom? null
+									change_date? <=> change_date? null
+									date <= date
 
 $bun_tasks_bar $mol_view
 	ord \0
 	date_id \2023-01-01
 	task_ids? /string
 	task*? null
+	bar_task_ids*? null
 	sub /
 		<= Input_row $mol_row
 			sub /
@@ -433,6 +453,8 @@ $bun_tasks_bar $mol_view
 					move_up? <=> move_task_up*? null
 					move_down? <=> move_task_down*? null
 					move_bottom? <=> move_task_bottom*? null
+					change_date? <=> change_task_date*? null
+					date <= date_id
 
 $bun_tasks $mol_page
 	title \Спиок дел
@@ -440,6 +462,7 @@ $bun_tasks $mol_page
 	date_selected_id \
 	bar_task_ids_current_date*? null
 	date_type* null
+	date_bar_task_ids*? null
 	attr *
 		^
 		mol_theme \$mol_theme_light
@@ -454,11 +477,13 @@ $bun_tasks $mol_page
 					date_id <= date_selected_id
 					task_ids? <=> bar_task_ids_current_date*1?
 					task*? <=> task*?
+					bar_task_ids*? <=> date_bar_task_ids*?
 				<= Bar_right $bun_tasks_bar
 					ord \2
 					date_id <= date_selected_id
 					task_ids? <=> bar_task_ids_current_date*2?
 					task*? <=> task*?
+					bar_task_ids*? <=> date_bar_task_ids*?
 
 $bun_tasks_enter_input $mol_string
 	plugins /

@@ -1954,6 +1954,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    function $bun_tasks_time_shift_days(start: string, day_count: number): string;
     function $bun_tasks_time_is_today(date: string): boolean;
     function $bun_tasks_time_is_prev(date: string): boolean;
     function $bun_tasks_time_is_next(date: string): boolean;
@@ -2045,8 +2046,19 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $bun_tasks_task_item_options extends $mol_view {
+    class $bun_tasks_task_item_controls extends $mol_view {
+        change_date(id: any, next?: any): any;
+        date(): string;
         sub(): readonly any[];
+        Change_date_icon(): $mol_icon_calendar;
+        change_date_plus_one(next?: any): any;
+        Plus_one(): $mol_button_minor;
+        change_date_plus_two(next?: any): any;
+        Plus_two(): $mol_button_minor;
+        change_date_plus_three(next?: any): any;
+        Plus_three(): $mol_button_minor;
+        Change_date_options(): $$.$mol_list;
+        Change_date_pick(): $$.$mol_pick;
         Top_button_icon(): $mol_icon_arrow_collapse_up;
         move_top(next?: any): any;
         Top_button(): $mol_button_minor;
@@ -2063,9 +2075,19 @@ declare namespace $ {
     }
 }
 
+declare namespace $.$$ {
+    class $bun_tasks_task_item_controls extends $.$bun_tasks_task_item_controls {
+        change_date_plus(day_count: number): void;
+        change_date_plus_one(): void;
+        change_date_plus_two(): void;
+        change_date_plus_three(): void;
+    }
+}
+
 declare namespace $ {
     class $bun_tasks_task_item extends $mol_view {
         edit_mode(): boolean;
+        date(): string;
         attr(): Record<string, any>;
         sub(): readonly any[];
         done(next?: any): any;
@@ -2074,13 +2096,13 @@ declare namespace $ {
         toggle_edit_mode(next?: any): any;
         Edit_icon(): $mol_icon_pencil;
         Edit_button(): $mol_button_minor;
-        Tools(): $$.$mol_list;
+        Tools(): $mol_view;
         title(next?: any): string;
         quit_edit_mode(next?: any): any;
         Title(): $$.$bun_tasks_editable_text;
         details(next?: any): string;
         Details(): $$.$bun_tasks_editable_text;
-        Text_content(): $$.$mol_list;
+        Text_content(): $mol_view;
         Left_side(): $mol_view;
         Drop_task_icon(): $mol_icon_trash_can_outline;
         drop(next?: any): any;
@@ -2090,9 +2112,9 @@ declare namespace $ {
         move_up(next?: any): any;
         move_down(next?: any): any;
         move_bottom(next?: any): any;
-        Options(): $bun_tasks_task_item_options;
+        change_date(next?: any): any;
+        Controls(): $$.$bun_tasks_task_item_controls;
         Popover(): $$.$mol_pick;
-        Extra_tools(): $mol_view;
         Right_side(): $mol_view;
         Content(): $mol_row;
     }
@@ -2112,6 +2134,7 @@ declare namespace $ {
         date_id(): string;
         task_ids(next?: any): readonly string[];
         task(id: any, next?: any): any;
+        bar_task_ids(id: any, next?: any): any;
         sub(): readonly any[];
         input_title_value(next?: any): string;
         add_task(next?: any): any;
@@ -2128,6 +2151,7 @@ declare namespace $ {
         move_task_up(id: any, next?: any): any;
         move_task_down(id: any, next?: any): any;
         move_task_bottom(id: any, next?: any): any;
+        change_task_date(id: any, next?: any): any;
         Task(id: any): $$.$bun_tasks_task_item;
         tasks(): readonly $mol_view[];
         List(): $$.$mol_list;
@@ -2166,6 +2190,7 @@ declare namespace $.$$ {
         move_task_down(id: string): void;
         move_task_top(id: string): void;
         move_task_bottom(id: string): void;
+        change_task_date(id: string, date_id: string): void;
         tasks(): $bun_tasks_task_item[];
     }
 }
@@ -2177,6 +2202,7 @@ declare namespace $ {
         date_selected_id(): string;
         bar_task_ids_current_date(id: any, next?: any): any;
         date_type(id: any): any;
+        date_bar_task_ids(id: any, next?: any): any;
         attr(): Record<string, any>;
         body(): readonly any[];
         date_selected(next?: any): $mol_time_moment;
@@ -2221,7 +2247,7 @@ declare namespace $.$$ {
         task(id: string, next?: $bun_tasks_task_model | null): $bun_tasks_task_model | null;
         date_list(next?: Date_list): Date_list;
         date_bars(date_id: string, next?: Date_bars): Date_bars;
-        bar_task_ids({ 0: date_id, 1: bar }: [string, string], next?: Bar_task_ids): Bar_task_ids;
+        date_bar_task_ids({ 0: date_id, 1: bar }: [string, string], next?: Bar_task_ids): Bar_task_ids;
         bar_task_ids_current_date(bar: string, next?: Bar_task_ids): Bar_task_ids;
         task_ids_date(date_id: string): Bar_task_ids;
         date_selected(next?: $mol_time_moment): $mol_time_moment;

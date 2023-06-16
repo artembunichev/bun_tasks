@@ -6573,6 +6573,12 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    function $bun_tasks_time_shift_days(start, day_count) {
+        var start_date = new Date(start);
+        var result_day = start_date.setDate(start_date.getDate() + day_count);
+        return new $mol_time_moment(result_day).toString('YYYY-MM-DD');
+    }
+    $.$bun_tasks_time_shift_days = $bun_tasks_time_shift_days;
     function $bun_tasks_time_is_today(date) {
         var today = new Date().setHours(0, 0, 0, 0);
         var target = new Date(date).setHours(0, 0, 0, 0);
@@ -6799,11 +6805,76 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $bun_tasks_task_item_options extends $mol_view {
+    class $bun_tasks_task_item_controls extends $mol_view {
+        change_date(id, next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        date() {
+            return "";
+        }
         sub() {
             return [
                 this.List()
             ];
+        }
+        Change_date_icon() {
+            const obj = new this.$.$mol_icon_calendar();
+            return obj;
+        }
+        change_date_plus_one(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        Plus_one() {
+            const obj = new this.$.$mol_button_minor();
+            obj.title = () => "+ 1";
+            obj.click = (next) => this.change_date_plus_one(next);
+            return obj;
+        }
+        change_date_plus_two(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        Plus_two() {
+            const obj = new this.$.$mol_button_minor();
+            obj.title = () => "+ 2";
+            obj.click = (next) => this.change_date_plus_two(next);
+            return obj;
+        }
+        change_date_plus_three(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        Plus_three() {
+            const obj = new this.$.$mol_button_minor();
+            obj.title = () => "+ 3";
+            obj.click = (next) => this.change_date_plus_three(next);
+            return obj;
+        }
+        Change_date_options() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => [
+                this.Plus_one(),
+                this.Plus_two(),
+                this.Plus_three()
+            ];
+            return obj;
+        }
+        Change_date_pick() {
+            const obj = new this.$.$mol_pick();
+            obj.trigger_content = () => [
+                this.Change_date_icon()
+            ];
+            obj.align = () => "left_bottom";
+            obj.bubble_content = () => [
+                this.Change_date_options()
+            ];
+            return obj;
         }
         Top_button_icon() {
             const obj = new this.$.$mol_icon_arrow_collapse_up();
@@ -6876,6 +6947,7 @@ var $;
         List() {
             const obj = new this.$.$mol_list();
             obj.rows = () => [
+                this.Change_date_pick(),
                 this.Top_button(),
                 this.Up_button(),
                 this.Down_button(),
@@ -6885,47 +6957,113 @@ var $;
         }
     }
     __decorate([
-        $mol_mem
-    ], $bun_tasks_task_item_options.prototype, "Top_button_icon", null);
+        $mol_mem_key
+    ], $bun_tasks_task_item_controls.prototype, "change_date", null);
     __decorate([
         $mol_mem
-    ], $bun_tasks_task_item_options.prototype, "move_top", null);
+    ], $bun_tasks_task_item_controls.prototype, "Change_date_icon", null);
     __decorate([
         $mol_mem
-    ], $bun_tasks_task_item_options.prototype, "Top_button", null);
+    ], $bun_tasks_task_item_controls.prototype, "change_date_plus_one", null);
     __decorate([
         $mol_mem
-    ], $bun_tasks_task_item_options.prototype, "Up_icon", null);
+    ], $bun_tasks_task_item_controls.prototype, "Plus_one", null);
     __decorate([
         $mol_mem
-    ], $bun_tasks_task_item_options.prototype, "move_up", null);
+    ], $bun_tasks_task_item_controls.prototype, "change_date_plus_two", null);
     __decorate([
         $mol_mem
-    ], $bun_tasks_task_item_options.prototype, "Up_button", null);
+    ], $bun_tasks_task_item_controls.prototype, "Plus_two", null);
     __decorate([
         $mol_mem
-    ], $bun_tasks_task_item_options.prototype, "Down_icon", null);
+    ], $bun_tasks_task_item_controls.prototype, "change_date_plus_three", null);
     __decorate([
         $mol_mem
-    ], $bun_tasks_task_item_options.prototype, "move_down", null);
+    ], $bun_tasks_task_item_controls.prototype, "Plus_three", null);
     __decorate([
         $mol_mem
-    ], $bun_tasks_task_item_options.prototype, "Down_button", null);
+    ], $bun_tasks_task_item_controls.prototype, "Change_date_options", null);
     __decorate([
         $mol_mem
-    ], $bun_tasks_task_item_options.prototype, "Bottom_icon", null);
+    ], $bun_tasks_task_item_controls.prototype, "Change_date_pick", null);
     __decorate([
         $mol_mem
-    ], $bun_tasks_task_item_options.prototype, "move_bottom", null);
+    ], $bun_tasks_task_item_controls.prototype, "Top_button_icon", null);
     __decorate([
         $mol_mem
-    ], $bun_tasks_task_item_options.prototype, "Bottom_button", null);
+    ], $bun_tasks_task_item_controls.prototype, "move_top", null);
     __decorate([
         $mol_mem
-    ], $bun_tasks_task_item_options.prototype, "List", null);
-    $.$bun_tasks_task_item_options = $bun_tasks_task_item_options;
+    ], $bun_tasks_task_item_controls.prototype, "Top_button", null);
+    __decorate([
+        $mol_mem
+    ], $bun_tasks_task_item_controls.prototype, "Up_icon", null);
+    __decorate([
+        $mol_mem
+    ], $bun_tasks_task_item_controls.prototype, "move_up", null);
+    __decorate([
+        $mol_mem
+    ], $bun_tasks_task_item_controls.prototype, "Up_button", null);
+    __decorate([
+        $mol_mem
+    ], $bun_tasks_task_item_controls.prototype, "Down_icon", null);
+    __decorate([
+        $mol_mem
+    ], $bun_tasks_task_item_controls.prototype, "move_down", null);
+    __decorate([
+        $mol_mem
+    ], $bun_tasks_task_item_controls.prototype, "Down_button", null);
+    __decorate([
+        $mol_mem
+    ], $bun_tasks_task_item_controls.prototype, "Bottom_icon", null);
+    __decorate([
+        $mol_mem
+    ], $bun_tasks_task_item_controls.prototype, "move_bottom", null);
+    __decorate([
+        $mol_mem
+    ], $bun_tasks_task_item_controls.prototype, "Bottom_button", null);
+    __decorate([
+        $mol_mem
+    ], $bun_tasks_task_item_controls.prototype, "List", null);
+    $.$bun_tasks_task_item_controls = $bun_tasks_task_item_controls;
 })($ || ($ = {}));
-//bun/tasks/task/item/options/-view.tree/options.view.tree.ts
+//bun/tasks/task/item/controls/-view.tree/controls.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $bun_tasks_task_item_controls extends $.$bun_tasks_task_item_controls {
+            change_date_plus(day_count) {
+                this.change_date($bun_tasks_time_shift_days(this.date(), day_count));
+            }
+            change_date_plus_one() {
+                this.change_date_plus(1);
+            }
+            change_date_plus_two() {
+                this.change_date_plus(2);
+            }
+            change_date_plus_three() {
+                this.change_date_plus(3);
+            }
+        }
+        __decorate([
+            $mol_action
+        ], $bun_tasks_task_item_controls.prototype, "change_date_plus", null);
+        __decorate([
+            $mol_action
+        ], $bun_tasks_task_item_controls.prototype, "change_date_plus_one", null);
+        __decorate([
+            $mol_action
+        ], $bun_tasks_task_item_controls.prototype, "change_date_plus_two", null);
+        __decorate([
+            $mol_action
+        ], $bun_tasks_task_item_controls.prototype, "change_date_plus_three", null);
+        $$.$bun_tasks_task_item_controls = $bun_tasks_task_item_controls;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//bun/tasks/task/item/controls/controls.view.ts
 ;
 "use strict";
 var $;
@@ -6933,6 +7071,9 @@ var $;
     class $bun_tasks_task_item extends $mol_view {
         edit_mode() {
             return false;
+        }
+        date() {
+            return "";
         }
         attr() {
             return {
@@ -6979,7 +7120,7 @@ var $;
             return obj;
         }
         Tools() {
-            const obj = new this.$.$mol_list();
+            const obj = new this.$.$mol_view();
             obj.sub = () => [
                 this.Checkbox(),
                 this.Edit_button()
@@ -7016,7 +7157,7 @@ var $;
             return obj;
         }
         Text_content() {
-            const obj = new this.$.$mol_list();
+            const obj = new this.$.$mol_view();
             obj.sub = () => [
                 this.Title(),
                 this.Details()
@@ -7072,12 +7213,19 @@ var $;
                 return next;
             return null;
         }
-        Options() {
-            const obj = new this.$.$bun_tasks_task_item_options();
+        change_date(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        Controls() {
+            const obj = new this.$.$bun_tasks_task_item_controls();
             obj.move_top = (next) => this.move_top(next);
             obj.move_up = (next) => this.move_up(next);
             obj.move_down = (next) => this.move_down(next);
             obj.move_bottom = (next) => this.move_bottom(next);
+            obj.change_date = (next) => this.change_date(next);
+            obj.date = () => this.date();
             return obj;
         }
         Popover() {
@@ -7087,22 +7235,15 @@ var $;
                 this.Dots_icon()
             ];
             obj.bubble_content = () => [
-                this.Options()
-            ];
-            return obj;
-        }
-        Extra_tools() {
-            const obj = new this.$.$mol_view();
-            obj.sub = () => [
-                this.Drop_task_button(),
-                this.Popover()
+                this.Controls()
             ];
             return obj;
         }
         Right_side() {
             const obj = new this.$.$mol_view();
             obj.sub = () => [
-                this.Extra_tools()
+                this.Drop_task_button(),
+                this.Popover()
             ];
             return obj;
         }
@@ -7183,13 +7324,13 @@ var $;
     ], $bun_tasks_task_item.prototype, "move_bottom", null);
     __decorate([
         $mol_mem
-    ], $bun_tasks_task_item.prototype, "Options", null);
+    ], $bun_tasks_task_item.prototype, "change_date", null);
+    __decorate([
+        $mol_mem
+    ], $bun_tasks_task_item.prototype, "Controls", null);
     __decorate([
         $mol_mem
     ], $bun_tasks_task_item.prototype, "Popover", null);
-    __decorate([
-        $mol_mem
-    ], $bun_tasks_task_item.prototype, "Extra_tools", null);
     __decorate([
         $mol_mem
     ], $bun_tasks_task_item.prototype, "Right_side", null);
@@ -7246,6 +7387,11 @@ var $;
             return [];
         }
         task(id, next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        bar_task_ids(id, next) {
             if (next !== undefined)
                 return next;
             return null;
@@ -7336,6 +7482,11 @@ var $;
                 return next;
             return null;
         }
+        change_task_date(id, next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
         Task(id) {
             const obj = new this.$.$bun_tasks_task_item();
             obj.title = (next) => this.task_title(id, next);
@@ -7347,6 +7498,8 @@ var $;
             obj.move_up = (next) => this.move_task_up(id, next);
             obj.move_down = (next) => this.move_task_down(id, next);
             obj.move_bottom = (next) => this.move_task_bottom(id, next);
+            obj.change_date = (next) => this.change_task_date(id, next);
+            obj.date = () => this.date_id();
             return obj;
         }
         tasks() {
@@ -7366,6 +7519,9 @@ var $;
     __decorate([
         $mol_mem_key
     ], $bun_tasks_bar.prototype, "task", null);
+    __decorate([
+        $mol_mem_key
+    ], $bun_tasks_bar.prototype, "bar_task_ids", null);
     __decorate([
         $mol_mem
     ], $bun_tasks_bar.prototype, "input_title_value", null);
@@ -7408,6 +7564,9 @@ var $;
     __decorate([
         $mol_mem_key
     ], $bun_tasks_bar.prototype, "move_task_bottom", null);
+    __decorate([
+        $mol_mem_key
+    ], $bun_tasks_bar.prototype, "change_task_date", null);
     __decorate([
         $mol_mem_key
     ], $bun_tasks_bar.prototype, "Task", null);
@@ -7539,6 +7698,10 @@ var $;
                 var new_undone_ids = $bun_array_move_bottom(undone_ids, this.task_index(id));
                 this.task_ids([...new_undone_ids, ...done_ids]);
             }
+            change_task_date(id, date_id) {
+                this.task_ids(this.task_ids().filter(id2 => id2 !== id));
+                this.bar_task_ids([date_id, this.ord()], [id, ...this.bar_task_ids([date_id, this.ord()])]);
+            }
             tasks() {
                 return this.task_ids().map(id => this.Task(id));
             }
@@ -7580,6 +7743,9 @@ var $;
             $mol_action
         ], $bun_tasks_bar.prototype, "move_task_bottom", null);
         __decorate([
+            $mol_action
+        ], $bun_tasks_bar.prototype, "change_task_date", null);
+        __decorate([
             $mol_mem
         ], $bun_tasks_bar.prototype, "tasks", null);
         $$.$bun_tasks_bar = $bun_tasks_bar;
@@ -7608,6 +7774,11 @@ var $;
             return null;
         }
         date_type(id) {
+            return null;
+        }
+        date_bar_task_ids(id, next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
         attr() {
@@ -7639,6 +7810,7 @@ var $;
             obj.date_id = () => this.date_selected_id();
             obj.task_ids = (next) => this.bar_task_ids_current_date("1", next);
             obj.task = (id, next) => this.task(id, next);
+            obj.bar_task_ids = (id, next) => this.date_bar_task_ids(id, next);
             return obj;
         }
         Bar_right() {
@@ -7647,6 +7819,7 @@ var $;
             obj.date_id = () => this.date_selected_id();
             obj.task_ids = (next) => this.bar_task_ids_current_date("2", next);
             obj.task = (id, next) => this.task(id, next);
+            obj.bar_task_ids = (id, next) => this.date_bar_task_ids(id, next);
             return obj;
         }
         Bar_row() {
@@ -7665,6 +7838,9 @@ var $;
     __decorate([
         $mol_mem_key
     ], $bun_tasks.prototype, "bar_task_ids_current_date", null);
+    __decorate([
+        $mol_mem_key
+    ], $bun_tasks.prototype, "date_bar_task_ids", null);
     __decorate([
         $mol_mem
     ], $bun_tasks.prototype, "date_selected", null);
@@ -7760,7 +7936,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("bun/tasks/tasks.view.css", "mol_button {\n\tcursor: pointer !important;\n}\n\n[ bun_tasks_calendar_bubble ] {\n\tposition: relative;\n\ttop: 0;\n\tleft: 0;\n\tmax-height: 370px !important;\n\tbox-shadow: none;\n\tborder: 1px solid #000000;\n}\n\n[ mol_calendar_holiday ] {\n\tcolor: #ff0000;\n}\n\n[ bun_tasks_calendar ] [ mol_theme=\"$mol_theme_current\" ] {\n\tbackground-color: #41dcea5e;\n}\n\n[ mol_calendar_day ] {\n\tposition: relative;\n\tborder-radius: 0;\n\tborder: 0.1px solid #000000;\n}\n\n[ bun_tasks_calendar_day_dot ] {\n\tposition: absolute;\n\ttop: 2px;\n\tleft: 2px;\n\twidth: 5.5px;\n\theight: 5.5px;\n\tborder-radius: 50%;\n}\n\n[ dot_type = 'next' ] {\n\tbackground-color: #eada00;\n}\n\n[ dot_type = 'done' ] {\n\tbackground-color: #00ea10;\n}\n\n[ dot_type = 'undone' ] {\n\tbackground-color: #ea0000;\n}\n\n[ bun_tasks_bar_row ] {\n\twidth: 100%;\n\tdisplay: flex;\n}\n\n[ current_date ] {\n\ttext-decoration: underline;\n\tfont-weight: bold;\n}\n\n[ bun_tasks_bar ] {\n\tflex: 1 0 0;\n\tdisplay: flex;\n\tflex-direction: column;\n\tbackground-color: #f5f8fc;\n\tpadding: 10px;\n\tborder-radius: 8px;\n\tborder: 1px solid #000000;\n}\n\n[ done ] {\n\ttext-decoration: line-through;\n}\n\n[ bun_tasks_bar_task ] {\n\tdisplay: flex;\n\tflex-direction: column;\n\tpadding: 15px;\n\tmargin: 9px 0;\n\tbackground-color: var( --mol_theme_card );\n\tborder-radius: 8px;\n\tborder: 1px solid #000000;\n}\n\n[ bun_tasks_bar_task ]:first-child {\n\tmargin-top: 0;\n}\n\n[ bun_tasks_task_item ] {\n\tpadding: 0;\n}\n\n[ bun_tasks_bar_task_content_row ] {\n\tpadding: 0;\n}\n\n[ bun_tasks_task_item_tools ] {\n\tdisplay: flex;\n\tflex-direction: column;\n\talign-items: center;\n\tmargin-right: 15px;\n}\n\n[ bun_tasks_task_item_content ] {\n\tdisplay: flex;\n\tjustify-content: space-between;\n\talign-items: center;\n}\n\n[ bun_tasks_task_item_text_content ] {\n\tjustify-content: center;\n}\n\n[ bun_tasks_task_item_title ] {\n\tdisplay: flex;\n\tjustify-content: space-between;\n\tfont-size: 24px;\n}\n\n[ bun_tasks_task_item_details ] {\n\tfont-size: 19px;\n\tcolor: #6d6d6d;\n\tmargin-top: 2.4px;\n}\n");
+    $mol_style_attach("bun/tasks/tasks.view.css", "[ mol_view ] {\n\tflex-shrink: 1;\n\tflex-wrap: nowrap;\n}\n\nmol_button {\n\tcursor: pointer !important;\n}\n\n[ bun_tasks_calendar ] {\n\twidth: 274px;\n\theight: 288px;\n\tposition: relative;\n\ttop: 0;\n\tleft: 0;\n}\n\n[ bun_tasks_calendar_bubble ] {\n\ttransform: scale( 0.8 );\n\tposition: absolute;\n\ttop: -35px;\n\tleft: -38px;\n\tmax-height: 370px !important;\n\tbox-shadow: none;\n\tborder: 1px solid #000000;\n}\n\n[ mol_calendar_holiday ] {\n\tcolor: #ff0000;\n}\n\n[ bun_tasks_calendar ] [ mol_theme=\"$mol_theme_current\" ] {\n\tbackground-color: #41dcea5e;\n}\n\n[ mol_calendar_day ] {\n\tposition: relative;\n\tborder-radius: 0;\n\tborder: 0.1px solid #000000;\n}\n\n[ bun_tasks_calendar_day_dot ] {\n\tposition: absolute;\n\ttop: 2px;\n\tleft: 2px;\n\twidth: 5.5px;\n\theight: 5.5px;\n\tborder-radius: 50%;\n}\n\n[ dot_type = 'next' ] {\n\tbackground-color: #eada00;\n}\n\n[ dot_type = 'done' ] {\n\tbackground-color: #00ea10;\n}\n\n[ dot_type = 'undone' ] {\n\tbackground-color: #ea0000;\n}\n\n[ bun_tasks_bar_row ] {\n\twidth: 100%;\n\tdisplay: flex;\n}\n\n[ current_date ] {\n\ttext-decoration: underline;\n\tfont-weight: bold;\n}\n\n[ bun_tasks_bar ] {\n\tflex: 1 0 0;\n\tdisplay: flex;\n\tflex-direction: column;\n\tbackground-color: #f5f8fc;\n\tpadding: 10px;\n\tborder-radius: 8px;\n\tborder: 1px solid #000000;\n}\n\n[ done ] {\n\ttext-decoration: line-through;\n}\n\n[ bun_tasks_bar_task ] {\n\tdisplay: flex;\n\tflex-direction: column;\n\tpadding: 15px;\n\tmargin: 9px 0;\n\tbackground-color: var( --mol_theme_card );\n\tborder-radius: 8px;\n\tborder: 1px solid #000000;\n\toverflow-wrap: break-word;\n}\n\n[ bun_tasks_bar_task ]:first-child {\n\tmargin-top: 0;\n}\n\n[ bun_tasks_task_item ] {\n\tpadding: 0;\n}\n\n[ bun_tasks_bar_task_content_row ] {\n\tpadding: 0;\n}\n\n[ bun_tasks_task_item_tools ] {\n\tdisplay: flex;\n\tflex-direction: column;\n\talign-items: center;\n\tmargin-right: 15px;\n}\n\n[ bun_tasks_task_item_content ] {\n\tdisplay: flex;\n\tjustify-content: space-between;\n\talign-items: center;\n\twhite-space: break-spaces;\n}\n\n[ bun_tasks_task_item_text_content ] {\n\tflex-direction: column;\n\tjustify-content: center;\n}\n\n[ bun_tasks_task_item_title ] {\n\tdisplay: flex;\n\tjustify-content: space-between;\n\tfont-size: 24px;\n}\n\n[ bun_tasks_task_item_details ] {\n\tfont-size: 19px;\n\tcolor: #6d6d6d;\n\tmargin-top: 2.4px;\n}\n\n[ bun_tasks_bar_task_right_side ] {\n\tflex-shrink: 0;\n}\n");
 })($ || ($ = {}));
 //bun/tasks/-css/tasks.view.css.ts
 ;
@@ -7815,7 +7991,7 @@ var $;
                 }
                 return this.date_list()[date_id] ?? { '1': [], '2': [] };
             }
-            bar_task_ids({ 0: date_id, 1: bar }, next) {
+            date_bar_task_ids({ 0: date_id, 1: bar }, next) {
                 if (next !== undefined) {
                     this.date_bars(date_id, {
                         ...this.date_bars(date_id),
@@ -7825,7 +8001,7 @@ var $;
                 return this.date_bars(date_id)[bar];
             }
             bar_task_ids_current_date(bar, next) {
-                return this.bar_task_ids([this.date_selected_id(), bar], next);
+                return this.date_bar_task_ids([this.date_selected_id(), bar], next);
             }
             task_ids_date(date_id) {
                 return Object.values(this.date_bars(date_id)).reduce((acc, ids) => {
@@ -7910,7 +8086,7 @@ var $;
         ], $bun_tasks.prototype, "date_bars", null);
         __decorate([
             $mol_mem_key
-        ], $bun_tasks.prototype, "bar_task_ids", null);
+        ], $bun_tasks.prototype, "date_bar_task_ids", null);
         __decorate([
             $mol_mem_key
         ], $bun_tasks.prototype, "bar_task_ids_current_date", null);
