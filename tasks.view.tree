@@ -4,6 +4,7 @@ $bun_tasks $mol_page
 	date_selected_id \
 	bar_task_ids_current_date*? null
 	date_type* null
+	date_bar_task_ids*? null
 	attr *
 		^
 		mol_theme \$mol_theme_light
