@@ -3,6 +3,7 @@ $bun_tasks_bar $mol_view
 	date_id \2023-01-01
 	task_ids? /string
 	task*? null
+	bar_task_ids*? null
 	sub /
 		<= Input_row $mol_row
 			sub /
@@ -26,3 +27,5 @@ $bun_tasks_bar $mol_view
 					move_up? <=> move_task_up*? null
 					move_down? <=> move_task_down*? null
 					move_bottom? <=> move_task_bottom*? null
+					change_date? <=> change_task_date*? null
+					date <= date_id

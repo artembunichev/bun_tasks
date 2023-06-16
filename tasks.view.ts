@@ -80,7 +80,7 @@ namespace $.$$ {
 		}
 
 		@ $mol_mem_key
-		bar_task_ids( { 0: date_id, 1: bar } : [ string, string ], next?: Bar_task_ids ) {
+		date_bar_task_ids( { 0: date_id, 1: bar } : [ string, string ], next?: Bar_task_ids ) {
 			if ( next !== undefined ) {
 				this.date_bars(
 					date_id,
@@ -95,7 +95,7 @@ namespace $.$$ {
 
 		@ $mol_mem_key
 		bar_task_ids_current_date( bar: string, next?: Bar_task_ids ) {
-			return this.bar_task_ids( [ this.date_selected_id(), bar ], next )
+			return this.date_bar_task_ids( [ this.date_selected_id(), bar ], next )
 		}
 
 		@ $mol_mem_key

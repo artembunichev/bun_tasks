@@ -92,6 +92,12 @@ namespace $.$$ {
 			this.task_ids( [ ...new_undone_ids, ...done_ids ] )
 		}
 
+		@ $mol_action
+		change_task_date( id: string, date_id: string ) {
+			this.task_ids( this.task_ids().filter( id2 => id2 !== id ) )
+			this.bar_task_ids( [ date_id, this.ord() ], [ id, ...this.bar_task_ids( [ date_id, this.ord() ] ) ] )
+		}
+
 		@ $mol_mem
 		tasks() {
 			return this.task_ids().map( id => this.Task( id ) )

@@ -18,11 +18,13 @@ $bun_tasks $mol_page
 					date_id <= date_selected_id
 					task_ids? <=> bar_task_ids_current_date*1?
 					task*? <=> task*?
+					bar_task_ids*? <=> date_bar_task_ids*?
 				<= Bar_right $bun_tasks_bar
 					ord \2
 					date_id <= date_selected_id
 					task_ids? <=> bar_task_ids_current_date*2?
 					task*? <=> task*?
+					bar_task_ids*? <=> date_bar_task_ids*?
 
 $bun_tasks_enter_input $mol_string
 	plugins /

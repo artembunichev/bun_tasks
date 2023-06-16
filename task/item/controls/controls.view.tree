@@ -1,0 +1,34 @@
+$bun_tasks_task_item_controls $mol_view
+	change_date*? null
+	date \
+	sub /
+		<= List $mol_list
+			rows /
+				<= Change_date_pick $mol_pick
+					trigger_content /
+						<= Change_date_icon $mol_icon_calendar
+					align \left_bottom
+					bubble_content /
+						<= Change_date_options $mol_list
+							rows /
+								<= Plus_one $mol_button_minor
+									title \+ 1
+									click? <=> change_date_plus_one? null
+								<= Plus_two $mol_button_minor
+									title \+ 2
+									click? <=> change_date_plus_two? null
+								<= Plus_three $mol_button_minor
+									title \+ 3
+									click? <=> change_date_plus_three? null
+				<= Top_button $mol_button_minor
+					sub / <= Top_button_icon $mol_icon_arrow_collapse_up
+					click? <=> move_top? null
+				<= Up_button $mol_button_minor
+					sub / <= Up_icon $mol_icon_arrow_up
+					click? <=> move_up? null
+				<= Down_button $mol_button_minor
+					sub / <= Down_icon $mol_icon_arrow_down
+					click? <=> move_down? null
+				<= Bottom_button $mol_button_minor
+					sub / <= Bottom_icon $mol_icon_arrow_collapse_down
+					click? <=> move_bottom? null

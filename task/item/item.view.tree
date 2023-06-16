@@ -1,5 +1,6 @@
 $bun_tasks_task_item $mol_view
 	edit_mode false
+	date \
 	attr *
 		^
 		done <= done
@@ -37,8 +38,10 @@ $bun_tasks_task_item $mol_view
 									align \right_bottom
 									trigger_content / <= Dots_icon $mol_icon_dots_horizontal
 									bubble_content /
-										<= Options $bun_tasks_task_item_options
+										<= Controls $bun_tasks_task_item_controls
 											move_top? <=> move_top? null
 											move_up? <=> move_up? null
 											move_down? <=> move_down? null
 											move_bottom? <=> move_bottom? null
+											change_date? <=> change_date? null
+											date <= date
