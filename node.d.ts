@@ -2296,7 +2296,6 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    type $bun_array_move_identifier<T> = T | ((el: T) => unknown);
     function $bun_array_move_with<T>(arr: Readonly<Array<T>>, ind1: number, ind2: number): readonly T[];
     function $bun_array_move_up<T>(arr: Readonly<Array<T>>, ind: number): readonly T[];
     function $bun_array_move_down<T>(arr: Readonly<Array<T>>, ind: number): readonly T[];
