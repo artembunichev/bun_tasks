@@ -925,8 +925,8 @@ declare namespace $ {
 
 declare namespace $ {
     class $mol_scroll extends $mol_view {
-        scroll_top(val?: any): number;
-        scroll_left(val?: any): number;
+        scroll_top(next?: any): number;
+        scroll_left(next?: any): number;
         field(): Record<string, any>;
         event(): Record<string, any>;
         tabindex(): number;
@@ -1026,7 +1026,7 @@ declare namespace $ {
         head(): readonly any[];
         Head(): $mol_view;
         body(): readonly $mol_view_content[];
-        body_scroll_top(val?: any): number;
+        body_scroll_top(next?: any): number;
         Body(): $$.$mol_scroll;
         foot(): readonly $mol_view[];
         Foot(): $mol_view;
@@ -1169,7 +1169,7 @@ declare namespace $ {
 
 declare namespace $ {
     class $mol_pop extends $mol_view {
-        showed(val?: any): boolean;
+        showed(next?: any): boolean;
         align_vert(): string;
         align_hor(): string;
         prefer(): string;
@@ -1814,7 +1814,7 @@ declare namespace $ {
         enabled(): boolean;
         minimal_height(): number;
         autocomplete(): boolean;
-        selection(val?: any): readonly number[];
+        selection(next?: any): readonly number[];
         auto(): readonly any[];
         field(): Record<string, any>;
         attr(): Record<string, any>;
@@ -1822,8 +1822,8 @@ declare namespace $ {
         plugins(): readonly any[];
         selection_watcher(): any;
         disabled(): boolean;
-        value(val?: any): string;
-        value_changed(val?: any): string;
+        value(next?: any): string;
+        value_changed(next?: any): string;
         hint(): string;
         hint_visible(): string;
         spellcheck(): boolean;
@@ -1833,7 +1833,7 @@ declare namespace $ {
         keyboard(): string;
         enter(): string;
         length_max(): number;
-        type(val?: any): string;
+        type(next?: any): string;
         event_change(event?: any): any;
         submit_with_ctrl(): boolean;
         submit(event?: any): any;
@@ -2014,13 +2014,13 @@ declare namespace $ {
     class $mol_date extends $mol_pick {
         Icon(): $mol_icon_calendar;
         bubble_content(): readonly any[];
-        value_number(val?: any): number;
-        value_moment(val?: any): $mol_time_moment;
+        value_number(next?: any): number;
+        value_moment(next?: any): $mol_time_moment;
         today_enabled(): boolean;
         today_click(event?: any): any;
         Today_icon(): $mol_icon_calendar_today;
         Today(): $mol_button_minor;
-        value(val?: any): string;
+        value(next?: any): string;
         input_mask(id: any): string;
         enabled(): boolean;
         Input(): $$.$mol_format;

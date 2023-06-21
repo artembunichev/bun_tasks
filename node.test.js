@@ -2966,14 +2966,14 @@ var $;
 var $;
 (function ($) {
     class $mol_scroll extends $mol_view {
-        scroll_top(val) {
-            if (val !== undefined)
-                return val;
+        scroll_top(next) {
+            if (next !== undefined)
+                return next;
             return 0;
         }
-        scroll_left(val) {
-            if (val !== undefined)
-                return val;
+        scroll_left(next) {
+            if (next !== undefined)
+                return next;
             return 0;
         }
         field() {
@@ -3345,8 +3345,8 @@ var $;
         body() {
             return [];
         }
-        body_scroll_top(val) {
-            return this.Body().scroll_top(val);
+        body_scroll_top(next) {
+            return this.Body().scroll_top(next);
         }
         Body() {
             const obj = new this.$.$mol_scroll();
@@ -4069,9 +4069,9 @@ var $;
 var $;
 (function ($) {
     class $mol_pop extends $mol_view {
-        showed(val) {
-            if (val !== undefined)
-                return val;
+        showed(next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         align_vert() {
@@ -4768,7 +4768,7 @@ var $;
             obj.minimal_width = () => 40;
             obj.minimal_height = () => 40;
             obj.enabled = () => this.trigger_enabled();
-            obj.checked = (val) => this.showed(val);
+            obj.checked = (next) => this.showed(next);
             obj.sub = () => this.trigger_content();
             obj.hint = () => this.hint();
             return obj;
@@ -5888,9 +5888,9 @@ var $;
         autocomplete() {
             return false;
         }
-        selection(val) {
-            if (val !== undefined)
-                return val;
+        selection(next) {
+            if (next !== undefined)
+                return next;
             return [
                 0,
                 0
@@ -5939,13 +5939,13 @@ var $;
         disabled() {
             return false;
         }
-        value(val) {
-            if (val !== undefined)
-                return val;
+        value(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
-        value_changed(val) {
-            return this.value(val);
+        value_changed(next) {
+            return this.value(next);
         }
         hint() {
             return "";
@@ -5974,9 +5974,9 @@ var $;
         length_max() {
             return +Infinity;
         }
-        type(val) {
-            if (val !== undefined)
-                return val;
+        type(next) {
+            if (next !== undefined)
+                return next;
             return "text";
         }
         event_change(event) {
@@ -6786,14 +6786,14 @@ var $;
                 this.Calendar()
             ];
         }
-        value_number(val) {
-            if (val !== undefined)
-                return val;
+        value_number(next) {
+            if (next !== undefined)
+                return next;
             return +NaN;
         }
-        value_moment(val) {
-            if (val !== undefined)
-                return val;
+        value_moment(next) {
+            if (next !== undefined)
+                return next;
             const obj = new this.$.$mol_time_moment();
             return obj;
         }
@@ -6819,9 +6819,9 @@ var $;
             ];
             return obj;
         }
-        value(val) {
-            if (val !== undefined)
-                return val;
+        value(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         input_mask(id) {
@@ -6832,7 +6832,7 @@ var $;
         }
         Input() {
             const obj = new this.$.$mol_format();
-            obj.value = (val) => this.value(val);
+            obj.value = (next) => this.value(next);
             obj.mask = (id) => this.input_mask(id);
             obj.enabled = () => this.enabled();
             return obj;
@@ -11097,15 +11097,15 @@ var $;
 var $;
 (function ($) {
     class $mol_view_tree_test_binding extends $mol_view {
-        value(val) {
-            return this.task_title_new(val);
+        value(next) {
+            return this.task_title_new(next);
         }
         enabled() {
             return this.head_complete_enabled();
         }
-        task_title_new(val) {
-            if (val !== undefined)
-                return val;
+        task_title_new(next) {
+            if (next !== undefined)
+                return next;
             return "123";
         }
         head_complete_enabled() {
@@ -11186,9 +11186,9 @@ var $;
     ], $mol_view_tree_test_binding_right.prototype, "Test", null);
     $.$mol_view_tree_test_binding_right = $mol_view_tree_test_binding_right;
     class $mol_view_tree_test_binding_right_test extends $mol_view {
-        width(val) {
-            if (val !== undefined)
-                return val;
+        width(next) {
+            if (next !== undefined)
+                return next;
             return 0;
         }
     }
